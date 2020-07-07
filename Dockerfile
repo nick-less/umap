@@ -68,6 +68,6 @@ RUN chmod +x /tini
 
 EXPOSE 8000
 
-ENTRYPOINT ["/tini", "--"]
+ENTRYPOINT ["/tini", "--", "/docker-entrypoint.sh"]
 
 CMD ["/srv/umap/docker-entrypoint.sh"]
