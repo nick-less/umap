@@ -30,6 +30,9 @@ RUN apt-get update && \
         uwsgi \
         libpq-dev \
         build-essential \
+        postgresql \
+        postgresql-11-postgis-2.5-scripts \
+        postgis \
         binutils \
         gdal-bin \
         libproj-dev \
@@ -61,6 +64,8 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
+
+
 # Add Tini
 ENV TINI_VERSION v0.14.0
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
@@ -68,6 +73,6 @@ RUN chmod +x /tini
 
 EXPOSE 8000
 
-ENTRYPOINT ["/tini", "--", "/docker-entrypoint.sh"]
+ENTRYPOINT ["/tini", "--", "/srv/umap/docker-entrypoint.sh"]
 
 CMD ["/srv/umap/docker-entrypoint.sh"]
