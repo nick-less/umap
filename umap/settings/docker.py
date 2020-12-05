@@ -100,7 +100,7 @@ UMAP_MAPS_PER_PAGE_OWNER = 10
 SITE_URL = env('SITE_URL')
 SHORT_SITE_URL = env('SHORT_SITE_URL', default=None)
 
-#CACHES = {'default': env.cache('REDIS_URL', default='locmem://')}
+CACHES = {'default': env.cache('REDIS_URL', default='locmem://')}
 
 # POSTGIS_VERSION = (2, 1, 0)
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
