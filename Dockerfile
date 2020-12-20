@@ -1,78 +1,39 @@
-FROM node:12 AS vendors
-
-COPY . /srv/umap
-
-WORKDIR /srv/umap
-
-RUN make installjs
-
-RUN make vendors
-
-FROM python:3.8-slim
-
-ENV PYTHONUNBUFFERED=1 \
-    UMAP_SETTINGS=/srv/umap/umap/settings/docker.py \
-    PORT=8000
+FROM python:3.7.9-alpine3.12
 
 RUN mkdir -p /srv/umap/data && \
     mkdir -p /srv/umap/uploads
 
-RUN mkdir /usr/share/man/man1
+ADD requirements.txt /srv/umap/requirements.txt
+ADD docker-entrypoint.sh /srv/umap/docker-entrypoint.sh
 
-COPY . /srv/umap
+RUN set -ex \
+    && apk add --no-cache --virtual .build-deps libffi-dev zlib-dev jpeg-dev openssl-dev python3-dev postgresql-dev build-base \
+    && python -m venv /env \
+    && /env/bin/pip install --upgrade pip \
+    && /env/bin/pip install --no-cache-dir -r /srv/umap/requirements.txt \
+    && runDeps="$(scanelf --needed --nobanner --recursive /env \
+        | awk '{ gsub(/,/, "\nso:", $2); print "so:" $2 }' \
+        | sort -u \
+        | xargs -r apk info --installed \
+        | sort -u)" \
+    && apk add --virtual rundeps  $runDeps \
+    && apk del .build-deps \
+    && apk add binutils proj-dev  geos-dev gdal gdal-dev
 
-COPY --from=vendors /srv/umap/umap/static/umap/vendors /srv/umap/umap/static/umap/vendors
-
+ADD manage.py /srv/umap
+ADD uwsgi.ini /srv/umap
+ADD umap /srv/umap/umap
 WORKDIR /srv/umap
 
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-        uwsgi \
-        libpq-dev \
-        build-essential \
-        postgresql \
-        postgresql-11-postgis-2.5-scripts \
-        postgis \
-        binutils \
-        gdal-bin \
-        libproj-dev \
-        curl \
-        git \
-        gettext \
-        sqlite3 \
-        libffi-dev \
-        libtiff5-dev \
-        libjpeg62-turbo-dev \
-        zlib1g-dev \
-        libfreetype6-dev \
-        liblcms2-dev \
-        libwebp-dev \
-        && \
-    pip install --no-cache -r requirements-docker.txt && pip install . && \
-    apt-get remove -y \
-        binutils \
-        libproj-dev \
-        libffi-dev \
-        libtiff5-dev \
-        libjpeg62-turbo-dev \
-        zlib1g-dev \
-        libfreetype6-dev \
-        liblcms2-dev \
-        libwebp-dev \
-        && \
-    apt-get autoremove -y && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+ENV VIRTUAL_ENV /env
+ENV PATH /env/bin:$PATH
+ENV UMAP_SETTINGS=/srv/umap/umap/settings/docker.py 
+ENV PORT=8000
+#RUN bash -c 'virtualenv /srv/umap/venv --python=/usr/bin/python3.7'
+#RUN bash -c 'source /srv/umap/venv/bin/activate'
 
-
-
-# Add Tini
-ENV TINI_VERSION v0.14.0
-ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
-RUN chmod +x /tini
 
 EXPOSE 8000
 
-ENTRYPOINT ["/tini", "--", "/srv/umap/docker-entrypoint.sh"]
-
 CMD ["/srv/umap/docker-entrypoint.sh"]
+#CMD ["gunicorn", "--bind", ":8000", "--workers", "3", "uwsgi.ini"]

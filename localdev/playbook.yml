@@ -1,0 +1,39 @@
+---
+- hosts: all
+  vars: 
+    pg_hba_conf: /etc/postgresql/12/main/pg_hba.conf
+    postgres_conf: /etc/postgresql/12/main/postgresql.conf
+  become: yes
+  become_method: sudo
+  tasks:
+  - name: update apt
+    apt: name=sshpass update_cache=yes state=present
+  - name: install joe
+    apt: name=joe state=present
+  - name: postgresql 
+    apt: name=postgresql state=present
+  - name: postgresql python client
+    apt: name=python3-psycopg2  state=present
+  - name: install postgresql-12-postgis-3
+    apt: name=postgresql-12-postgis-3 state=present
+  - name: postgresql networking
+    replace: dest="{{postgres_conf}}" regexp="^\#listen_addresses\s=\s'localhost'.*$" replace="listen_addresses = '*'"
+  - name: postgresql umap user
+    lineinfile: dest="{{pg_hba_conf}}" regexp="^host\s+all\s+umap\s+0\.0\.0\.0/0\s+trust$" insertafter="^#\sIPv4\slocal.+" line="host    all             umap  0.0.0.0/0            trust"
+  - name: postgresql system user
+    replace: dest="{{pg_hba_conf}}" regexp="^local\s+all\s+postgres\s+peer$" replace="local    all             postgres             trust"
+
+  - name: restart postgresql
+    service: name=postgresql state=restarted
+
+  - name: postgresql database
+    postgresql_db: login_user=postgres login_password='' name=umap encoding='UTF-8'
+  - name: postgresql user
+    postgresql_user: login_user=postgres  login_password='' db=umap name=umap password=umap 
+  - name: Testing DB to make sure it is available
+    command: psql -U postgres umap  -c 'CREATE EXTENSION postgis;'
+
+  - name: postgresql client
+    apt: name=postgresql-client-common state=present
+
+
