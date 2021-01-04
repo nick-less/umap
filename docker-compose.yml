@@ -9,7 +9,7 @@ services:
     image: redis:latest
 
   app:
-    image: nick-less/umap
+    image: umap
     ports:
       - "7000:8000"
     environment:
@@ -20,7 +20,4 @@ services:
       - SITE_URL=http://localhost:7000/
       - LEAFLET_STORAGE_ALLOW_ANONYMOUS=True
     volumes:
-      - /Users/harry/Documents/exampleworkspace/umap/uploads:/srv/umap/uploads
-
-volumes:
-  db:
+      - umap_uploads:/srv/umap/uploads

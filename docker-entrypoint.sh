@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env ash
 set -eo pipefail
 
 # default variables
@@ -10,7 +10,7 @@ function wait_for_database {(
   tries=0
   while true; do
     [[ $tries -lt $TRIES ]] || return
-    (echo "from django.db import connection; connection.connect()" | umap shell) #>/dev/null 2>&1
+    (echo "from django.db import connection; connection.connect()" | python manage.py shell) #>/dev/null 2>&1
     [[ $? -eq 0 ]] && return
     sleep $SLEEP
     tries=$((tries + 1))
@@ -20,12 +20,12 @@ function wait_for_database {(
 # first wait for the database
 wait_for_database
 # then migrate the database
-umap migrate
+python manage.py migrate
 # then collect static files
-umap collectstatic --noinput
-# create languagae files
+python manage.py collectstatic --noinput
+# create language files
 #umap storagei18n
 # compress static files
-umap compress
+python manage.py compress
 # run uWSGI
 exec uwsgi --ini uwsgi.ini
