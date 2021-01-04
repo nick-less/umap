@@ -16,7 +16,11 @@
     "mocha-phantomjs": "^4.0.1",
     "optimist": "~0.4.0",
     "sinon": "^1.10.3",
-    "uglify-js": "~2.2.3"
+    "uglify-js": "~2.2.3",
+    "browserify": "17.0.0",
+    "@babel/core": "7.12.10",
+    "@babel/preset-env": "7.12.10",
+    "babelify": "10.0.0"
   },
   "scripts": {
     "test": "firefox test/index.html",
@@ -54,7 +58,7 @@
     "leaflet.markercluster": "^1.4.0",
     "leaflet.path.drag": "0.0.6",
     "leaflet.photon": "0.8.0",
-    "osmtogeojson": "^3.0.0-beta.3",
+    "osmtogeojson": "^3.0.0-beta.4",
     "togeojson": "0.16.0",
     "togpx": "^0.5.4",
     "tokml": "0.4.0"
