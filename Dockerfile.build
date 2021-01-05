@@ -1,11 +1,11 @@
-FROM ubuntu:bionic
+FROM ubuntu:focal
 
 RUN mkdir /srv/umap
 
 WORKDIR /srv/umap
 
 RUN apt-get update && \
-    apt-get install -y  \
+    DEBIAN_FRONTEND=noninteractive  apt-get install -y  \
         libpq-dev \
         build-essential \
         binutils \
