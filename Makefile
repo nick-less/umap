@@ -1,3 +1,7 @@
+install:
+	make installjs 
+	make vendors
+
 test:
 	py.test -xv umap/tests/
 develop:

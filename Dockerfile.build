@@ -1,0 +1,35 @@
+FROM ubuntu:bionic
+
+RUN mkdir /srv/umap
+
+WORKDIR /srv/umap
+
+RUN apt-get update && \
+    apt-get install -y  \
+        libpq-dev \
+        build-essential \
+        binutils \
+        gdal-bin \
+        libproj-dev \
+        curl \
+        git \
+        gettext \
+        sqlite3 \
+        libffi-dev \
+        libtiff5-dev \
+        libjpeg-dev \
+        zlib1g-dev \
+        libfreetype6-dev \
+        liblcms2-dev \
+        libwebp-dev \
+        npm
+
+
+#RUN make installjs
+#RUN make vendors
+#RUN pip install --no-cache -r requirements-docker.txt && pip install .
+
+
+#ENTRYPOINT ["/tini", "--", "/srv/umap/docker-entrypoint.sh"]
+
+#CMD ["/srv/umap/docker-entrypoint.sh"]
