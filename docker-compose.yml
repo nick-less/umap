@@ -21,3 +21,6 @@ services:
       - LEAFLET_STORAGE_ALLOW_ANONYMOUS=False
     volumes:
       - umap_uploads:/srv/umap/uploads
+volumes:
+  db:
+  umap_uploads:
