@@ -15,9 +15,9 @@ services:
     environment:
       - DATABASE_URL=postgis://postgres@db/postgres
       - REDIS_URL=redis://redis:6379/0
-      - SECRET_KEY=some-long-and-weirdly-unrandom-secret-key
+      - SECRET_KEY=${SECRET_KEY}
       - ALLOWED_HOSTS=*
-      - SITE_URL=http://localhost:7000/
-      - LEAFLET_STORAGE_ALLOW_ANONYMOUS=True
+      - SITE_URL=${SITE_URL}
+      - LEAFLET_STORAGE_ALLOW_ANONYMOUS=False
     volumes:
       - umap_uploads:/srv/umap/uploads
