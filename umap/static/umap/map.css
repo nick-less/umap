@@ -1346,6 +1346,20 @@ a.add-datalayer:hover,
     box-shadow: 1px 5px 5px black;
 }
 
+
+/* via logo */
+.leaflet-control-container::before  {
+    position: absolute;
+    background-image: url(img/Logovia_bunt.jpg);
+    background-size: contain;
+    top: 16px;
+    left: 64px;
+    width: 177px;
+    height: 110px;
+    z-index: 10000;
+    content: " ";
+}
+
 /* ****** */
 /* Mobile */
 /* ****** */
