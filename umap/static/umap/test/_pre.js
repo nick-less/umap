@@ -215,9 +215,14 @@ var RESPONSES = {
     }
 };
 
-
+/*
+sinon getRequest signature changed
 sinon.fakeServer.getRequest = function (path, method) {
     var request;
+    console.log("########");
+    console.log(method);
+    console.log(path);
+    console.log(requests);
     for (var i=0, l=this.requests.length; i<l; i++) {
         request = this.requests[i];
         // In case of a form submit, the request start with file://
@@ -228,7 +233,7 @@ sinon.fakeServer.getRequest = function (path, method) {
         }
     }
 };
-
+*/
 sinon.fakeServer.flush = function () {
     this.responses = [];
 };

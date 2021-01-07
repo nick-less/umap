@@ -1,8 +1,8 @@
-describe('L.Utorage.Controls', function(){
+describe('L.Storage.Controls', function(){
 
     before(function () {
         this.server = sinon.fakeServer.create();
-        this.server.respondWith('/datalayer/62/', JSON.stringify(RESPONSES.datalayer62_GET));
+        this.server.respondWith('GET','/datalayer/62/', JSON.stringify(RESPONSES.datalayer62_GET));
         this.map = initMap({umap_id: 99});
         this.server.respond();
         this.datalayer = this.map.getDataLayerByUmapId(62);

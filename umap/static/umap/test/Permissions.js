@@ -24,6 +24,8 @@ describe('L.Permissions', function () {
         });
 
         it('should open table button click', function () {
+            console.log("########");
+            console.log(button);
             happen.click(button);
             expect(qs('.permissions-panel')).to.be.ok;
         });

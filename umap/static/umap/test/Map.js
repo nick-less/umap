@@ -2,7 +2,7 @@ describe('L.U.Map', function(){
 
     before(function () {
         this.server = sinon.fakeServer.create();
-        this.server.respondWith('/datalayer/62/', JSON.stringify(RESPONSES.datalayer62_GET));
+        this.server.respondWith('GET','/datalayer/62/', JSON.stringify(RESPONSES.datalayer62_GET));
         this.options = {
             umap_id: 99
         };
@@ -35,11 +35,13 @@ describe('L.U.Map', function(){
         });
 
         it('should have icon container div', function(){
+            console.log(qs('div.icon_container'));
             assert.ok(qs('div.icon_container'));
         });
 
         it('should hide icon container div when hiding datalayer', function() {
             var el = qs('.leaflet-control-browse #browse_data_toggle_' + L.stamp(this.datalayer) + ' .layer-toggle');
+            console.log(el);
             happen.click(el);
             assert.notOk(qs('div.icon_container'));
         });
