@@ -1349,13 +1349,13 @@ a.add-datalayer:hover,
 
 /* via logo */
 .leaflet-control-container::before  {
-    position: relative;
+    position: absolute;
     background-image: url(img/Logovia_bunt.jpg);
     background-size: contain;
-    top: 14px;
+    top: 60px;
     left: 64px;
-    width: 58px;
-    height: 55px;
+    width: 52px;
+    height: 32px;
     z-index: 10000;
     content: " ";
 }

@@ -116,9 +116,9 @@ L.U.Icon.Drop = L.U.Icon.Default.extend({
 
 L.U.Icon.Triangle = L.U.Icon.Default.extend({
     default_options: {
-            iconAnchor: new L.Point(16, 42),
-            popupAnchor: new L.Point(0, -42),
-            tooltipAnchor: new L.Point(16, -24),
+            iconAnchor: new L.Point(8, 21),
+            popupAnchor: new L.Point(0, -21),
+            tooltipAnchor: new L.Point(8, -12),
             className: 'umap-triangle-icon'
     },
 
@@ -133,7 +133,7 @@ L.U.Icon.Triangle = L.U.Icon.Default.extend({
         this.elements.main = L.DomUtil.create('div');
         this.elements.container = L.DomUtil.create('div', 'icon_container', this.elements.main);
         this.elements.arrow = L.DomUtil.create('div', 'icon_arrow', this.elements.main);
-        this.elements.span = L.DomUtil.create('span', 'umap-font-triangle umap-icon-default', this.elements.container)
+        this.elements.span = L.DomUtil.create('span', 'umap-font-triangle umap-icon-small', this.elements.container)
         this._setColor();
         this._setIconStyles(this.elements.main, 'icon');
         return this.elements.main;
