@@ -360,10 +360,17 @@ class MapDetailMixin:
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        user = self.request.user
+        allowFullEdit = False
+        if not self.request.user.is_anonymous:
+            allowFullEdit =  self.request.user.has_perm('map.change_map') or user == self.object.owner
+
+
         properties = {
             'urls': _urls_for_js(),
             'tilelayers': TileLayer.get_list(),
             'allowEdit': self.is_edit_allowed(),
+            'allowFullEdit': allowFullEdit,
             'default_iconUrl': "%sumap/img/marker.png" % settings.STATIC_URL,  # noqa
             'umap_id': self.get_umap_id(),
             'licences': dict((l.name, l.json) for l in Licence.objects.all()),
@@ -384,8 +391,8 @@ class MapDetailMixin:
             locale = to_locale(locale)
             properties['locale'] = locale
             context['locale'] = locale
-        user = self.request.user
-        if not user.is_anonymous:
+       
+        if not self.request.user.is_anonymous:
             properties['user'] = {
                 'id': user.pk,
                 'name': user.get_username(),

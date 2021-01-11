@@ -5,7 +5,7 @@
 
 {% block extra_head %}
     {% compress css %}
-        {% umap_css %}
+    {% umap_css %}
     {% endcompress %}
     {% umap_js locale=locale %}
     {% if object.share_status != object.PUBLIC %}
