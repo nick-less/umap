@@ -196,6 +196,7 @@ L.FormBuilder.IconClassSwitcher = L.FormBuilder.Select.extend({
         ['Default', L._('Default')],
         ['Circle', L._('Circle')],
         ['Drop', L._('Drop')],
+        ['Triangle', L._('Triangle')],
         ['Ball', L._('Ball')]
     ]
 

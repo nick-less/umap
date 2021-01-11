@@ -8,16 +8,20 @@
   "devDependencies": {
     "chai": "4.2.0",
     "happen": "0.3.2",
+    "require": "2.4.20",
+    "puppeteer": "5.5.0",
     "mocha": "8.2.1",
     "mocha-chrome": "2.2.0",
     "optimist": "0.6.1",
     "sinon": "9.2.3",
     "uglify-js": "3.12.4",
-    "browserify": "17.0.0"
+    "browserify": "17.0.0",
+    "svgtofont": "3.8.0"
   },
   "scripts": {
     "test": "mocha-chrome umap/static/umap/test/index.html",
-    "build": "grunt"
+    "build": "grunt",
+    "font": "svgtofont --sources ./icons --output ./umap/static/umap/font/generated --fontName umap-font"
   },
   "repository": {
     "type": "git",

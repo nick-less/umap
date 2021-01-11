@@ -1349,16 +1349,30 @@ a.add-datalayer:hover,
 
 /* via logo */
 .leaflet-control-container::before  {
-    position: absolute;
+    position: relative;
     background-image: url(img/Logovia_bunt.jpg);
     background-size: contain;
-    top: 16px;
+    top: 14px;
     left: 64px;
-    width: 177px;
-    height: 110px;
+    width: 58px;
+    height: 55px;
     z-index: 10000;
     content: " ";
 }
+
+.umap-icon-default {
+    font-size: 24px !important;
+}
+
+.umap-icon-medium {
+    font-size: 18px !important;
+}
+
+.umap-icon-small {
+    font-size: 12px !important;
+}
+
+
 
 /* ****** */
 /* Mobile */
