@@ -1,6 +1,6 @@
 {
   "name": "umap",
-  "version": "1.2.23-alpha.1",
+  "version": "1.2.3-via",
   "description": "Manage map and features with Leaflet and expose them for backend storage through an API.",
   "directories": {
     "test": "test"
@@ -20,7 +20,8 @@
   },
   "scripts": {
     "test": "mocha-chrome umap/static/umap/test/index.html",
-    "build": "grunt",
+    "build": "npm run font; npm run updateversion",
+    "updateversion": "node -p -e \"require('./package.json').version \" >umap/version.txt",
     "font": "svgtofont --sources ./icons --output ./umap/static/umap/font/generated --fontName umap-font"
   },
   "repository": {

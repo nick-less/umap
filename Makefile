@@ -1,6 +1,6 @@
 install:
 	make installjs 
-	npm run font
+	npm run build
 	make vendors
 
 test:
