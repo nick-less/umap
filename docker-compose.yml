@@ -1,9 +1,13 @@
 version: '2'
 services:
   db:
-    image: mdillon/postgis:9.6-alpine
+    image: mdillon/postgis:11-alpine
     volumes:
       - db:/var/lib/postgresql/data
+    environment: 
+      - POSTGRES_USER=umap
+      - POSTGRES_PASSWORD=umap
+      - POSTGRES_DB=umap
 
   redis:
     image: redis:latest
@@ -13,7 +17,7 @@ services:
     ports:
       - "7000:8000"
     environment:
-      - DATABASE_URL=postgis://postgres@db/postgres
+      - DATABASE_URL=postgis://umap:umap@db/umap
       - REDIS_URL=redis://redis:6379/0
       - SECRET_KEY=${SECRET_KEY}
       - ALLOWED_HOSTS=*
