@@ -17,7 +17,7 @@ services:
   app:
     image: umap
     ports:
-      - "7000:8000"
+      - "127.0.0.1:7000:8000"
     environment:
       - DATABASE_URL=postgis://umap:umap@db/umap
       - REDIS_URL=redis://redis:6379/0
