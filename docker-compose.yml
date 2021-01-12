@@ -8,9 +8,11 @@ services:
       - POSTGRES_USER=umap
       - POSTGRES_PASSWORD=umap
       - POSTGRES_DB=umap
+    restart: always 
 
   redis:
     image: redis:latest
+    restart: always 
 
   app:
     image: umap
@@ -23,6 +25,7 @@ services:
       - ALLOWED_HOSTS=*
       - SITE_URL=${SITE_URL}
       - LEAFLET_STORAGE_ALLOW_ANONYMOUS=False
+    restart: always 
     volumes:
       - umap_uploads:/srv/umap/uploads
 volumes:
