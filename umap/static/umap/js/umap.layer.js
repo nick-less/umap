@@ -1007,7 +1007,6 @@ L.U.DataLayer = L.Evented.extend({
         if (!this.isLoaded()) {return;}
         var geojson = this.umapGeoJSON();
         var formData = new FormData();
-        console.log(this.options);
         formData.append('name', this.options.name);
         formData.append('display_on_load', !!this.options.displayOnLoad);
         formData.append('protected', !!this.options.protected);
