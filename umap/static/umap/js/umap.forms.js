@@ -261,9 +261,12 @@ L.FormBuilder.DataLayerSwitcher = L.FormBuilder.Select.extend({
 
     getOptions: function () {
         var options = [];
+        var that = this;
         this.builder.map.eachDataLayerReverse(function (datalayer) {
             if(datalayer.isLoaded() && !datalayer.isRemoteLayer() && datalayer.canBrowse()) {
-                options.push([L.stamp(datalayer), datalayer.getName()]);
+                if (that.builder.map.options.allowFullEdit || !datalayer.options.protected) {
+                    options.push([L.stamp(datalayer), datalayer.getName()]);
+                }
             }
         });
         return options;
