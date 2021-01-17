@@ -371,6 +371,7 @@ class MapDetailMixin:
             'tilelayers': TileLayer.get_list(),
             'allowEdit': self.is_edit_allowed(),
             'allowFullEdit': allowFullEdit,
+            'isAnonymous' : self.request.user.is_anonymous,
             'default_iconUrl': "%sumap/img/marker.png" % settings.STATIC_URL,  # noqa
             'umap_id': self.get_umap_id(),
             'licences': dict((l.name, l.json) for l in Licence.objects.all()),

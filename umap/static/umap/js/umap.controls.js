@@ -732,12 +732,30 @@ L.U.Map.include({
         L.bind(appendAll, this)();
         L.DomEvent.on(filter, 'input', appendAll, this);
         L.DomEvent.on(filter, 'input', resetLayers, this);
+
+
+
         var link = L.DomUtil.create('li', '');
         L.DomUtil.create('i', 'umap-icon-16 umap-caption', link);
         var label = L.DomUtil.create('span', '', link);
         label.textContent = label.title = L._('About');
         L.DomEvent.on(link, 'click', this.displayCaption, this);
-        this.ui.openPanel({data: {html: browserContainer}, actions: [link]});
+
+        var actions = [link];
+
+        if (MAP.options.isAnonymous) {
+            var loginLink = L.DomUtil.create('li', '');
+            L.DomUtil.create('i', 'umap-caption', loginLink);
+            var loginButton = L.DomUtil.create('span', '', loginLink);
+            loginButton.textContent = loginButton.title = L._('Login');
+            L.DomEvent.on(loginButton, 'click', function () {MAP.xhr.login({"login_required":'/de/login', 'redirect':window.location.pathname});}, this);
+            actions = [link, loginLink];
+        }
+
+
+        this.ui.openPanel({data: {html: browserContainer}, actions: actions});
+
+
     }
 
 });
