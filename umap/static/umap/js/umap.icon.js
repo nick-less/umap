@@ -104,6 +104,33 @@ L.U.Icon.Circle = L.U.Icon.extend({
 
 });
 
+L.U.Icon.CircleMed = L.U.Icon.Circle.extend({
+    initialize: function(map, options) {
+        var default_options = {
+            iconAnchor: new L.Point(6, 6),
+            popupAnchor: new L.Point(0, -6),
+            tooltipAnchor: new L.Point(13, 5),
+            className: 'umap-circle-icon-medium'
+        };
+        options = L.Util.extend({}, default_options, options);
+        L.U.Icon.prototype.initialize.call(this, map, options);
+    }
+});
+
+L.U.Icon.CircleBig = L.U.Icon.Circle.extend({
+    initialize: function(map, options) {
+        var default_options = {
+            iconAnchor: new L.Point(6, 6),
+            popupAnchor: new L.Point(0, -6),
+            tooltipAnchor: new L.Point(24, 8),
+            className: 'umap-circle-icon-big'
+        };
+        options = L.Util.extend({}, default_options, options);
+        L.U.Icon.prototype.initialize.call(this, map, options);
+    }
+});
+
+
 L.U.Icon.Drop = L.U.Icon.Default.extend({
     default_options: {
             iconAnchor: new L.Point(16, 42),
@@ -114,12 +141,15 @@ L.U.Icon.Drop = L.U.Icon.Default.extend({
 });
 
 
+
+
 L.U.Icon.Triangle = L.U.Icon.Default.extend({
     default_options: {
             iconAnchor: new L.Point(8, 21),
             popupAnchor: new L.Point(0, -21),
             tooltipAnchor: new L.Point(8, -12),
-            className: 'umap-triangle-icon'
+            className: 'umap-triangle-icon',
+            fontClassName: 'umap-font-triangle umap-icon-small'
     },
 
     _setColor: function() {
@@ -133,10 +163,30 @@ L.U.Icon.Triangle = L.U.Icon.Default.extend({
         this.elements.main = L.DomUtil.create('div');
         this.elements.container = L.DomUtil.create('div', 'icon_container', this.elements.main);
         this.elements.arrow = L.DomUtil.create('div', 'icon_arrow', this.elements.main);
-        this.elements.span = L.DomUtil.create('span', 'umap-font-triangle umap-icon-small', this.elements.container)
+        this.elements.span = L.DomUtil.create('span', this.options.fontClassName, this.elements.container)
         this._setColor();
         this._setIconStyles(this.elements.main, 'icon');
         return this.elements.main;
+    }
+});
+
+L.U.Icon.DropMed = L.U.Icon.Triangle.extend({
+    default_options: {
+            iconAnchor: new L.Point(16, 42),
+            popupAnchor: new L.Point(0, -42),
+            tooltipAnchor: new L.Point(16, -24),
+            className: 'umap-drop-med-icon',
+            fontClassName : 'umap-font-drop umap-icon-default'
+    }
+});
+
+L.U.Icon.DropSm = L.U.Icon.Triangle.extend({
+    default_options: {
+            iconAnchor: new L.Point(10, 32),
+            popupAnchor: new L.Point(0, -32),
+            tooltipAnchor: new L.Point(10, -24),
+            className: 'umap-drop-sm-icon',
+            fontClassName : 'umap-font-drop umap-icon-medium'
     }
 });
 
@@ -145,18 +195,8 @@ L.U.Icon.Vollwegweiser =  L.U.Icon.Triangle.extend({
             iconAnchor: new L.Point(8, 21),
             popupAnchor: new L.Point(0, -21),
             tooltipAnchor: new L.Point(8, -12),
-            className: 'umap-vollwegweiser-icon'
-    },
-
-    createIcon: function() {
-        this.elements = {};
-        this.elements.main = L.DomUtil.create('div');
-        this.elements.container = L.DomUtil.create('div', 'icon_container', this.elements.main);
-        this.elements.arrow = L.DomUtil.create('div', 'icon_arrow', this.elements.main);
-        this.elements.span = L.DomUtil.create('span', 'umap-font-vollwegweiser umap-icon-small', this.elements.container)
-        this._setColor();
-        this._setIconStyles(this.elements.main, 'icon');
-        return this.elements.main;
+            className: 'umap-vollwegweiser-icon',
+            fontClassName : 'umap-font-vollwegweiser umap-icon-small'
     }
 });
 
@@ -165,19 +205,11 @@ L.U.Icon.Tafel =  L.U.Icon.Triangle.extend({
             iconAnchor: new L.Point(8, 21),
             popupAnchor: new L.Point(0, -21),
             tooltipAnchor: new L.Point(8, -12),
-            className: 'umap-tafel-icon'
-    },
-
-    createIcon: function() {
-        this.elements = {};
-        this.elements.main = L.DomUtil.create('div');
-        this.elements.container = L.DomUtil.create('div', 'icon_container', this.elements.main);
-        this.elements.arrow = L.DomUtil.create('div', 'icon_arrow', this.elements.main);
-        this.elements.span = L.DomUtil.create('span', 'umap-font-tafel umap-icon-small', this.elements.container)
-        this._setColor();
-        this._setIconStyles(this.elements.main, 'icon');
-        return this.elements.main;
+            className: 'umap-tafel-icon',
+            fontClassName : 'umap-font-tafel umap-icon-small'
+ 
     }
+
 });
 
 
