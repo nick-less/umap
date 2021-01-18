@@ -29,11 +29,7 @@ ENV VIRTUAL_ENV /env
 ENV PATH /env/bin:$PATH
 ENV UMAP_SETTINGS=/srv/umap/umap/settings/docker.py 
 ENV PORT=8000
-#RUN bash -c 'virtualenv /srv/umap/venv --python=/usr/bin/python3.7'
-#RUN bash -c 'source /srv/umap/venv/bin/activate'
-
 
 EXPOSE 8000
 
 CMD ["/srv/umap/docker-entrypoint.sh"]
-#CMD ["gunicorn", "--bind", ":8000", "--workers", "3", "uwsgi.ini"]
