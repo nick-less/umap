@@ -190,7 +190,7 @@ L.U.FeatureMixin = {
     },
 
     confirmDelete: function () {
-        if (confirm(L._('Are you sure you want to delete the feature?'))) {
+        if ((this.map.options.allowFullEdit || !this.datalayer.options.protected) && confirm(L._('Are you sure you want to delete the feature?'))) {
             this.del();
             return true;
         }
