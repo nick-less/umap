@@ -632,7 +632,8 @@ L.U.PathMixin = {
     },
 
     _toggleEditing: function(e) {
-        if(this.map.editEnabled) {
+
+        if((this.map.editEnabled) && (this.map.options.allowFullEdit || !this.datalayer.options.protected)) {
             if(this.editEnabled()) {
                 this.endEdit();
                 this.map.ui.closePanel();
