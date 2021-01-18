@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Creator: CorelDRAW 2017 -->
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="26.9874mm" height="26.9874mm" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+viewBox="0 0 2234.29 2234.29"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs>
+  <style type="text/css">
+   <![CDATA[
+    .str0 {stroke:black;stroke-width:21.94;stroke-miterlimit:22.9256}
+    .str1 {stroke:#2B2A29;stroke-width:16.56;stroke-miterlimit:22.9256}
+    .fil0 {fill:none}
+    .fil1 {fill:black}
+   ]]>
+  </style>
+ </defs>
+ <g id="Ebene_x0020_1">
+  <metadata id="CorelCorpID_0Corel-Layer"/>
+  <g id="_2918565608752">
+   <g id="_2476615100944">
+    <rect id="canvas_background" class="fil0" x="-0" y="0" width="2234.29" height="2234.29"/>
+    <g id="canvasGrid" display="none">
+     <rect id="svg_1" class="fil0" x="21.9" y="21.91" width="2190.48" height="2190.48"/>
+    </g>
+   </g>
+   <g id="_2476615097744">
+    <g id="svg_46">
+     <line id="svg_34" class="fil0 str0" x1="21.9" y1="21.91" x2="2212.38" y2= "21.91" />
+     <line id="svg_39" class="fil0 str0" x1="569.52" y1="1117.15" x2="1664.76" y2= "1117.15" />
+     <line id="svg_40" class="fil0 str0" x1="21.9" y1="21.91" x2="21.9" y2= "2212.39" />
+     <line id="svg_41" class="fil0 str0" x1="569.52" y1="1117.15" x2="569.52" y2= "2212.39" />
+     <line id="svg_42" class="fil0 str0" x1="21.9" y1="2212.39" x2="569.52" y2= "2212.39" />
+     <line id="svg_43" class="fil0 str0" x1="1664.76" y1="2212.39" x2="2212.38" y2= "2212.39" />
+     <line id="svg_44" class="fil0 str0" x1="1664.76" y1="1117.15" x2="1664.76" y2= "2212.39" />
+     <line id="svg_45" class="fil0 str0" x1="2212.38" y1="21.91" x2="2212.38" y2= "2212.39" />
+    </g>
+   </g>
+   <polygon class="fil1 str1" points="2212.38,2212.39 2212.38,21.91 21.91,21.91 21.91,2212.38 569.52,2212.39 569.52,1117.15 1664.76,1117.15 1664.76,2212.38 "/>
+  </g>
+ </g>
+</svg>
