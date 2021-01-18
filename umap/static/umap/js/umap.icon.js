@@ -107,8 +107,8 @@ L.U.Icon.Circle = L.U.Icon.extend({
 L.U.Icon.CircleMed = L.U.Icon.Circle.extend({
     initialize: function(map, options) {
         var default_options = {
-            iconAnchor: new L.Point(6, 6),
-            popupAnchor: new L.Point(0, -6),
+            iconAnchor: new L.Point(12, 12),
+            popupAnchor: new L.Point(0, -12),
             tooltipAnchor: new L.Point(13, 5),
             className: 'umap-circle-icon-medium'
         };
@@ -120,8 +120,8 @@ L.U.Icon.CircleMed = L.U.Icon.Circle.extend({
 L.U.Icon.CircleBig = L.U.Icon.Circle.extend({
     initialize: function(map, options) {
         var default_options = {
-            iconAnchor: new L.Point(6, 6),
-            popupAnchor: new L.Point(0, -6),
+            iconAnchor: new L.Point(16, 16),
+            popupAnchor: new L.Point(0, -16),
             tooltipAnchor: new L.Point(24, 8),
             className: 'umap-circle-icon-big'
         };
