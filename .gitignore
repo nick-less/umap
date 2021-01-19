@@ -21,4 +21,4 @@ dist/
 *.log
 .vagrant
 umap/version.txt
-
+.DS_Store
