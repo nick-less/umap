@@ -376,6 +376,7 @@ var locale = {
     "Drop New": "Tropfen (neu)",
     "Drop Medium": "Tropfen (mittel)",
     "Drop Small": "Tropen (klein)",
+    "Diamond": "Raute",
     "House": "Haus",
     "Sandglass": "Sanduhr",
     "Sign": "Tafel",
