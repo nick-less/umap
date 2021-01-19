@@ -1017,6 +1017,12 @@ L.U.DataLayer = L.Evented.extend({
         this.map.post(this.getSaveUrl(), {
             data: formData,
             callback: function (data, response) {
+                // Response contains geojson only if save has conflicted and conflicts have
+                // been resolved. So we need to reload to get extra data (saved from someone else)
+                if (data.geojson) {
+                    this.clear();
+                    this.fromGeoJSON(data.geojson);
+                }
                 this._geojson = geojson;
                 this._etag = response.getResponseHeader('ETag');
                 this.setUmapId(data.id);

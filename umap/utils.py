@@ -5,7 +5,7 @@ from django.urls import URLPattern, URLResolver
 
 
 def get_uri_template(urlname, args=None, prefix=""):
-    '''
+    """
     Utility function to return an URI Template from a named URL in django
     Copied from django-digitalpaper.
 
@@ -17,21 +17,22 @@ def get_uri_template(urlname, args=None, prefix=""):
       non-capturing parenthesis in them) by trying to find a pattern
       whose optional parameters match those you specified (a parameter
       is considered optional if it doesn't appear in every pattern possibility)
-    '''
+    """
+
     def _convert(template, args=None):
         """URI template converter"""
         if not args:
             args = []
         paths = template % dict([p, "{%s}" % p] for p in args)
-        return u'%s/%s' % (prefix, paths)
+        return u"%s/%s" % (prefix, paths)
 
     resolver = get_resolver(None)
-    parts = urlname.split(':')
+    parts = urlname.split(":")
     if len(parts) > 1 and parts[0] in resolver.namespace_dict:
         namespace = parts[0]
         urlname = parts[1]
         nprefix, resolver = resolver.namespace_dict[namespace]
-        prefix = prefix + '/' + nprefix.rstrip('/')
+        prefix = prefix + "/" + nprefix.rstrip("/")
     possibilities = resolver.reverse_dict.getlist(urlname)
     for tmp in possibilities:
         possibility, pattern = tmp[:2]
@@ -60,7 +61,6 @@ def get_uri_template(urlname, args=None, prefix=""):
 
 
 class DecoratedURLPattern(URLPattern):
-
     def resolve(self, *args, **kwargs):
         result = URLPattern.resolve(self, *args, **kwargs)
         if result:
@@ -96,6 +96,7 @@ def decorated_patterns(func, *urls):
                         if not hasattr(pp, "_decorate_with"):
                             setattr(pp, "_decorate_with", [])
                         pp._decorate_with.append(func)
+
     if func:
         if not isinstance(func, (list, tuple)):
             func = [func]
@@ -106,6 +107,41 @@ def decorated_patterns(func, *urls):
 
 
 def gzip_file(from_path, to_path):
-    with open(from_path, 'rb') as f_in:
-        with gzip.open(to_path, 'wb') as f_out:
+    with open(from_path, "rb") as f_in:
+        with gzip.open(to_path, "wb") as f_out:
             f_out.writelines(f_in)
+
+
+def merge_conflicts(reference, latest, entrant):
+
+    # Just in case (eg. both removed the same element, or changed only metadatas)
+    if latest == entrant:
+        return latest
+
+    # Remove common features between entrant and reference versions (unchanged ones).
+    for feature in reference[:]:
+        for other in entrant[:]:
+            if feature == other:
+                entrant.remove(feature)
+                reference.remove(feature)
+                break
+
+    # Now make sure remaining features are still in latest version
+    for feature in reference:
+        found = False
+        for other in latest:
+            if other == feature:
+                found = True
+                break
+        if not found:
+            # We cannot distinguish the case where both deleted the same
+            # element and added others, or where both modified the same
+            # element, so let's raise a conflict by caution.
+            return False
+
+    # We can merge.
+    for feature in reference:
+        latest.remove(feature)
+    for feature in entrant:
+        latest.append(feature)
+    return latest
