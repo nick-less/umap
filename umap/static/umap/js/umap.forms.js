@@ -194,15 +194,21 @@ L.FormBuilder.IconClassSwitcher = L.FormBuilder.Select.extend({
 
     selectOptions: [
         ['Default', L._('Default')],
-        ['Circle', L._('Circle')],
+        ['Circle', L._('Circle Small')],
         ['CircleMed', L._('Circle Medium')],
         ['CircleBig', L._('Circle Big')],
         ['Drop', L._('Drop')],
+        ['DropBig', L._('Drop New')],
         ['DropMed', L._('Drop Medium')],
         ['DropSm', L._('Drop Small')],
         ['Ball', L._('Ball')],
-        ['Tafel', L._('Tafel')],
-        ['Triangle', L._('Triangle')]
+        ['Diamond', L._('Diamond')],
+        ['House', L._('House')],
+        ['Sandglass', L._('Sandglass')],
+        ['Sign', L._('Sign')],
+        ['Square', L._('Square')],
+        ['Triangle', L._('Triangle')],
+        ['XForm', L._('X-Form')]
     ]
 
 });

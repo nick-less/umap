@@ -1,11 +1,19 @@
-<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
- <!-- Created with Method Draw - http://github.com/duopixel/Method-Draw/ -->
- <g>
-  <title>background</title>
-  <rect fill="#fff" id="canvas_background" height="32" width="32" y="-1" x="-1"/>
- </g>
- <g>
-  <title>Layer 1</title>
-  <path transform="rotate(-0.153787, 398.93, 301.313)" id="svg_1" d="m0.42861,602.32141l398.5013,-602.01613l398.5013,602.01613l-797.00261,0z" stroke-width="1.5" stroke="#fff" fill="#000"/>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Creator: CorelDRAW 2017 -->
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="26.6666mm" height="26.7819mm" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+viewBox="0 0 2667.5 2679.03"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs>
+  <style type="text/css">
+   <![CDATA[
+    .str0 {stroke:black;stroke-width:20.01;stroke-miterlimit:22.9256}
+    .fil0 {fill:black}
+   ]]>
+  </style>
+ </defs>
+ <g id="Ebene_x0020_1">
+  <metadata id="CorelCorpID_0Corel-Layer"/>
+  <polygon class="fil0 str0" points="10,2669.02 2651.32,2669.03 1327.98,22.36 10,2658.33 "/>
  </g>
 </svg>

@@ -1376,6 +1376,10 @@ a.add-datalayer:hover,
     content: " ";
 }
 
+.umap-icon-big {
+    font-size: 48px !important;
+}
+
 .umap-icon-default {
     font-size: 32px !important;
 }

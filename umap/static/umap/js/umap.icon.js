@@ -170,6 +170,16 @@ L.U.Icon.Triangle = L.U.Icon.Default.extend({
     }
 });
 
+L.U.Icon.DropBig = L.U.Icon.Triangle.extend({
+    default_options: {
+            iconAnchor: new L.Point(24, 52),
+            popupAnchor: new L.Point(0, -52),
+            tooltipAnchor: new L.Point(24, -28),
+            className: 'umap-drop-new-icon',
+            fontClassName : 'umap-font-drop umap-icon-big'
+    }
+});
+
 L.U.Icon.DropMed = L.U.Icon.Triangle.extend({
     default_options: {
             iconAnchor: new L.Point(16, 42),
@@ -190,27 +200,73 @@ L.U.Icon.DropSm = L.U.Icon.Triangle.extend({
     }
 });
 
-L.U.Icon.Vollwegweiser =  L.U.Icon.Triangle.extend({
-    default_options: {
-            iconAnchor: new L.Point(8, 21),
-            popupAnchor: new L.Point(0, -21),
-            tooltipAnchor: new L.Point(8, -12),
-            className: 'umap-vollwegweiser-icon',
-            fontClassName : 'umap-font-vollwegweiser umap-icon-small'
-    }
-});
 
-L.U.Icon.Tafel =  L.U.Icon.Triangle.extend({
+L.U.Icon.Sign =  L.U.Icon.Triangle.extend({
     default_options: {
             iconAnchor: new L.Point(8, 21),
             popupAnchor: new L.Point(0, -21),
             tooltipAnchor: new L.Point(8, -12),
-            className: 'umap-tafel-icon',
-            fontClassName : 'umap-font-tafel umap-icon-small'
+            className: 'umap-sign-icon',
+            fontClassName : 'umap-font-sign umap-icon-small'
  
     }
-
 });
+
+L.U.Icon.Diamond =  L.U.Icon.Triangle.extend({
+    default_options: {
+            iconAnchor: new L.Point(8, 21),
+            popupAnchor: new L.Point(0, -21),
+            tooltipAnchor: new L.Point(8, -12),
+            className: 'umap-diamond-icon',
+            fontClassName : 'umap-font-diamond umap-icon-small'
+ 
+    }
+});
+
+L.U.Icon.House =  L.U.Icon.Triangle.extend({
+    default_options: {
+            iconAnchor: new L.Point(8, 21),
+            popupAnchor: new L.Point(0, -21),
+            tooltipAnchor: new L.Point(8, -12),
+            className: 'umap-house-icon',
+            fontClassName : 'umap-font-house umap-icon-small'
+ 
+    }
+});
+
+L.U.Icon.Sandglass =  L.U.Icon.Triangle.extend({
+    default_options: {
+            iconAnchor: new L.Point(8, 21),
+            popupAnchor: new L.Point(0, -21),
+            tooltipAnchor: new L.Point(8, -12),
+            className: 'umap-sandglass-icon',
+            fontClassName : 'umap-font-sandglass umap-icon-small'
+ 
+    }
+});
+
+L.U.Icon.Square =  L.U.Icon.Triangle.extend({
+    default_options: {
+            iconAnchor: new L.Point(8, 21),
+            popupAnchor: new L.Point(0, -21),
+            tooltipAnchor: new L.Point(8, -12),
+            className: 'umap-square-icon',
+            fontClassName : 'umap-font-square umap-icon-small'
+ 
+    }
+});
+
+L.U.Icon.XForm =  L.U.Icon.Triangle.extend({
+    default_options: {
+            iconAnchor: new L.Point(8, 21),
+            popupAnchor: new L.Point(0, -21),
+            tooltipAnchor: new L.Point(8, -12),
+            className: 'umap-x-form-icon',
+            fontClassName : 'umap-font-x-form umap-icon-small'
+ 
+    }
+});
+
 
 
 L.U.Icon.Ball = L.U.Icon.Default.extend({
