@@ -826,9 +826,6 @@ L.U.AttributionControl = L.Control.Attribution.extend({
 
     _update: function () {
         L.Control.Attribution.prototype._update.call(this);
-        if (this._map.options.shortCredit) {
-            L.DomUtil.add('span', '', this._container, ' — ' + L.Util.toHTML(this._map.options.shortCredit));
-        }
         var link = L.DomUtil.add('a', '', this._container, ' — ' + L._('About'));
         L.DomEvent
             .on(link, 'click', L.DomEvent.stop)
@@ -838,6 +835,9 @@ L.U.AttributionControl = L.Control.Attribution.extend({
             // We are not in iframe mode
             var home = L.DomUtil.add('a', '', this._container, ' — ' + L._('Home'));
             home.href = '/';
+        }
+        if (this._map.options.shortCredit) {
+            L.DomUtil.add('span', '', this._container, ' — ' + L.Util.toHTML(this._map.options.shortCredit));
         }
     }
 
