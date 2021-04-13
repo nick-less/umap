@@ -1,4 +1,5 @@
 Django==2.2.20
+wheel==0.36.2 
 django-agnocomplete==1.0.0
 django-compressor==2.4
 Pillow==8.1.1
