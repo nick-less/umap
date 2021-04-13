@@ -19,7 +19,7 @@ RUN set -ex \
         | sort -u)" \
     && apk add --virtual rundeps  $runDeps \
     && apk del .build-deps \
-    && apk add binutils rust proj-dev  geos-dev gdal gdal-dev
+    && apk add binutils rust openssl-dev cargo proj-dev  geos-dev gdal gdal-dev
 
 ADD manage.py /srv/umap
 ADD uwsgi.ini /srv/umap
