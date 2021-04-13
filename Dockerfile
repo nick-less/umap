@@ -1,4 +1,4 @@
-FROM python:3.7.9-alpine3.12
+FROM python:3.9.4-alpine3.13
 
 RUN mkdir -p /srv/umap/data && \
     mkdir -p /srv/umap/uploads
