@@ -7,7 +7,7 @@ ADD requirements.txt /srv/umap/requirements.txt
 ADD docker-entrypoint.sh /srv/umap/docker-entrypoint.sh
 
 RUN set -ex \
-    && apk add --no-cache --virtual .build-deps libffi-dev zlib-dev jpeg-dev orust openssl-dev cargo python3-dev postgresql-dev build-base \
+    && apk add --no-cache --virtual .build-deps libffi-dev zlib-dev jpeg-dev rust openssl-dev cargo python3-dev postgresql-dev build-base \
     && python -m venv /env \
     && python -m pip install -U pip \
     && /env/bin/pip install --upgrade pip \
