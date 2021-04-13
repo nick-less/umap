@@ -9,6 +9,7 @@ ADD docker-entrypoint.sh /srv/umap/docker-entrypoint.sh
 RUN set -ex \
     && apk add --no-cache --virtual .build-deps libffi-dev zlib-dev jpeg-dev openssl-dev python3-dev postgresql-dev build-base \
     && python -m venv /env \
+    && python -m pip install -U pip \
     && /env/bin/pip install --upgrade pip \
     && /env/bin/pip install --no-cache-dir -r /srv/umap/requirements.txt \
     && runDeps="$(scanelf --needed --nobanner --recursive /env \
