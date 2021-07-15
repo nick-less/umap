@@ -5,7 +5,7 @@ services:
     volumes:
       - db:/var/lib/postgresql/data
     ports:
-      - "127.0.0.1:5432:5452"
+      - "127.0.0.1:5452:5432"
     environment: 
       - POSTGRES_USER=umap
       - POSTGRES_PASSWORD=umap
@@ -21,7 +21,7 @@ services:
     ports:
       - "127.0.0.1:7000:8000"
     environment:
-      - DATABASE_URL=postgis://umap:umap@db:5452/umap
+      - DATABASE_URL=postgis://umap:umap@db/umap
       - REDIS_URL=redis://redis:6379/0
       - SECRET_KEY=${SECRET_KEY}
       - ALLOWED_HOSTS=*
