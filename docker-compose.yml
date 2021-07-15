@@ -4,7 +4,9 @@ services:
     image: mdillon/postgis:9.6-alpine
     volumes:
       - db:/var/lib/postgresql/data
-
+    ports:
+      - "127.0.0.1:5452:5432"
+  
   redis:
     image: redis:latest
 
@@ -13,7 +15,7 @@ services:
     ports:
       - "7000:8000"
     environment:
-      - DATABASE_URL=postgis://postgres@db/postgres
+      - DATABASE_URL=postgis://postgres@db:5453/postgres
       - REDIS_URL=redis://redis:6379/0
       - SECRET_KEY=${SECRET_KEY}
       - ALLOWED_HOSTS=*
