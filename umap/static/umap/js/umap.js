@@ -237,14 +237,18 @@ L.U.Map.include({
 
             new L.U.DrawToolbar({map: this}).addTo(this);
 
-            var editActions = [
-                L.U.ImportAction,
-                L.U.EditPropertiesAction,
-                L.U.ChangeTileLayerAction,
-                L.U.ManageDatalayersAction,
-                L.U.UpdateExtentAction,
-                L.U.UpdatePermsAction
-            ];
+            var editActions = [];
+            if (this.options.allowFullEdit) {
+                editActions = [
+                    L.U.ImportAction,
+                    L.U.EditPropertiesAction,
+                    L.U.ChangeTileLayerAction,
+                    L.U.ManageDatalayersAction,
+                    L.U.UpdateExtentAction,
+                    L.U.UpdatePermsAction
+                ];
+    
+            }
             new L.U.SettingsToolbar({actions: editActions}).addTo(this);
         }
         this._controls.zoom = new L.Control.Zoom({zoomInTitle: L._('Zoom in'), zoomOutTitle: L._('Zoom out')});

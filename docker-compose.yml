@@ -1,26 +1,33 @@
 version: '2'
 services:
   db:
-    image: mdillon/postgis:9.6-alpine
+    image: mdillon/postgis:11-alpine
     volumes:
       - db:/var/lib/postgresql/data
     ports:
       - "127.0.0.1:5452:5432"
-  
+    environment: 
+      - POSTGRES_USER=umap
+      - POSTGRES_PASSWORD=umap
+      - POSTGRES_DB=umap
+    restart: always 
+
   redis:
     image: redis:latest
+    restart: always 
 
   app:
     image: umap
     ports:
-      - "7000:8000"
+      - "127.0.0.1:7000:8000"
     environment:
-      - DATABASE_URL=postgis://postgres@db:5453/postgres
+      - DATABASE_URL=postgis://umap:umap@db5453/umap
       - REDIS_URL=redis://redis:6379/0
       - SECRET_KEY=${SECRET_KEY}
       - ALLOWED_HOSTS=*
       - SITE_URL=${SITE_URL}
       - LEAFLET_STORAGE_ALLOW_ANONYMOUS=False
+    restart: always 
     volumes:
       - umap_uploads:/srv/umap/uploads
 volumes:

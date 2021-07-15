@@ -1,4 +1,5 @@
 import hashlib
+from io import BytesIO
 import json
 import os
 import re
@@ -35,7 +36,7 @@ from .forms import (DEFAULT_LATITUDE, DEFAULT_LONGITUDE, DEFAULT_CENTER,
                     AnonymousMapPermissionsForm, DataLayerForm, FlatErrorList,
                     MapSettingsForm, UpdateMapPermissionsForm)
 from .models import DataLayer, Licence, Map, Pictogram, TileLayer
-from .utils import get_uri_template, gzip_file
+from .utils import get_uri_template, gzip_file, merge_conflicts
 
 try:
     # python3
@@ -360,10 +361,18 @@ class MapDetailMixin:
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        user = self.request.user
+        allowFullEdit = False
+        if not self.request.user.is_anonymous:
+            allowFullEdit =  self.request.user.has_perm('map.change_map') or user == self.object.owner
+
+
         properties = {
             'urls': _urls_for_js(),
             'tilelayers': TileLayer.get_list(),
             'allowEdit': self.is_edit_allowed(),
+            'allowFullEdit': allowFullEdit,
+            'isAnonymous' : self.request.user.is_anonymous,
             'default_iconUrl': "%sumap/img/marker.png" % settings.STATIC_URL,  # noqa
             'umap_id': self.get_umap_id(),
             'licences': dict((l.name, l.json) for l in Licence.objects.all()),
@@ -384,8 +393,8 @@ class MapDetailMixin:
             locale = to_locale(locale)
             properties['locale'] = locale
             context['locale'] = locale
-        user = self.request.user
-        if not user.is_anonymous:
+       
+        if not self.request.user.is_anonymous:
             properties['user'] = {
                 'id': user.pk,
                 'name': user.get_username(),
@@ -694,12 +703,7 @@ class GZipMixin(object):
     def _path(self):
         return self.object.geojson.path
 
-    def path(self):
-        """
-        Serve gzip file if client accept it.
-        Generate or update the gzip file if needed.
-        """
-        path = self._path()
+    def get_flat_or_gzip(self, path):
         statobj = os.stat(path)
         ae = self.request.META.get('HTTP_ACCEPT_ENCODING', '')
         if re_accepts_gzip.search(ae) and getattr(settings, 'UMAP_GZIP', True):
@@ -716,8 +720,18 @@ class GZipMixin(object):
             path = gzip_path
         return path
 
+    def path(self):
+        """
+        Serve gzip file if client accept it.
+        Generate or update the gzip file if needed.
+        """
+        return self.get_flat_or_gzip(self._path())
+
+    @property
     def etag(self):
-        path = self.path()
+        return self.compute_etag(self.path())
+
+    def compute_etag(self, path):
         with open(path, mode='rb') as f:
             return hashlib.md5(f.read()).hexdigest()
 
@@ -765,7 +779,7 @@ class DataLayerCreate(FormLessEditMixin, GZipMixin, CreateView):
         form.instance.map = self.kwargs['map_inst']
         self.object = form.save()
         response = simple_json_response(**self.object.metadata)
-        response['ETag'] = self.etag()
+        response['ETag'] = self.etag
         return response
 
 
@@ -775,8 +789,12 @@ class DataLayerUpdate(FormLessEditMixin, GZipMixin, UpdateView):
 
     def form_valid(self, form):
         self.object = form.save()
-        response = simple_json_response(**self.object.metadata)
-        response['ETag'] = self.etag()
+        data = {**self.object.metadata}
+        if self.request.session.get("needs_reload"):
+            data["geojson"] = json.loads(self.object.geojson.read().decode())
+            self.request.session["needs_reload"] = False
+        response = simple_json_response(**data)
+        response['ETag'] = self.etag
         return response
 
     def if_match(self):
@@ -784,18 +802,53 @@ class DataLayerUpdate(FormLessEditMixin, GZipMixin, UpdateView):
         match = True
         if_match = self.request.META.get('HTTP_IF_MATCH')
         if if_match:
-            etag = self.etag()
-            if etag != if_match:
+            if self.etag != if_match:
                 match = False
         return match
+
+    def merge(self):
+        """Try to merge conflicts."""
+
+        # Latest known version of the data.
+        with open(self._path()) as f:
+            latest = json.loads(f.read())
+
+        # New data received in the request.
+        entrant = json.loads(self.request.FILES["geojson"].read())
+
+        # Reference data source of the edition.
+        if_match = self.request.META.get('HTTP_IF_MATCH')
+
+        for name in self.object.get_versions():
+            path = os.path.join(settings.MEDIA_ROOT, self.object.get_version_path(name))
+            if if_match == self.compute_etag(self.get_flat_or_gzip(path)):
+                with open(path) as f:
+                    reference = json.loads(f.read())
+                break
+        else:
+            # No reference version found, can't merge.
+            return False
+
+        merge = merge_conflicts(reference["features"], latest["features"], entrant["features"])
+        if merge is False:
+            return merge
+        latest["features"] = merge
+
+        # Update request data.
+        self.request.FILES['geojson'].file = BytesIO(json.dumps(latest).encode('utf-8'))
+
+        return True
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
         if self.object.map != self.kwargs['map_inst']:
             return HttpResponseForbidden()
         if not self.if_match():
-            return HttpResponse(status=412)
-        return super(DataLayerUpdate, self).post(request, *args, **kwargs)
+            if not self.merge():
+                return HttpResponse(status=412)
+            # We merged, let's ask the frontend to reload data.
+            self.request.session["needs_reload"] = True
+        return super().post(request, *args, **kwargs)
 
 
 class DataLayerDelete(DeleteView):

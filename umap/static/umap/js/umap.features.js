@@ -190,7 +190,7 @@ L.U.FeatureMixin = {
     },
 
     confirmDelete: function () {
-        if (confirm(L._('Are you sure you want to delete the feature?'))) {
+        if ((this.map.options.allowFullEdit || !this.datalayer.options.protected) && confirm(L._('Are you sure you want to delete the feature?'))) {
             this.del();
             return true;
         }
@@ -632,7 +632,8 @@ L.U.PathMixin = {
     },
 
     _toggleEditing: function(e) {
-        if(this.map.editEnabled) {
+
+        if((this.map.editEnabled) && (this.map.options.allowFullEdit || !this.datalayer.options.protected)) {
             if(this.editEnabled()) {
                 this.endEdit();
                 this.map.ui.closePanel();

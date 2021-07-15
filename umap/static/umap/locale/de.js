@@ -370,7 +370,21 @@ var locale = {
     "Feature identifier key": "Feature identifier key",
     "Open current feature on load": "Open current feature on load",
     "Permalink": "Permalink",
-    "The name of the property to use as feature unique identifier.": "The name of the property to use as feature unique identifier."
+    "The name of the property to use as feature unique identifier.": "The name of the property to use as feature unique identifier.",
+    "Circle Small": "Kreis (klein)",
+    "Circle Medium": "Kreis (mittel)",
+    "Circle Big": "Kreis (groß)",
+    "Drop New": "Tropfen (neu)",
+    "Drop Medium": "Tropfen (mittel)",
+    "Drop Small": "Tropen (klein)",
+    "Diamond": "Raute",
+    "House": "Haus",
+    "Sandglass": "Sanduhr",
+    "Sign": "Tafel",
+    "Square": "Quadrat",
+    "Triangle": "Dreieck 1",
+    "X-Form": "X-Form"
+
 }
 ;
 L.registerLocale("de", locale);

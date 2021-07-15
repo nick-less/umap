@@ -261,6 +261,11 @@ class DataLayer(NamedModel):
         verbose_name=_("display on load"),
         help_text=_("Display this layer on load.")
     )
+    protected = models.BooleanField(
+        default=False,
+        verbose_name=_("protected"),
+        help_text=_("protected from editor changes.")
+    )
     rank = models.SmallIntegerField(default=0)
 
     class Meta:
@@ -297,7 +302,9 @@ class DataLayer(NamedModel):
         return {
             "name": self.name,
             "id": self.pk,
-            "displayOnLoad": self.display_on_load
+            "displayOnLoad": self.display_on_load,
+            "protected": self.protected
+
         }
 
     def clone(self, map_inst=None):

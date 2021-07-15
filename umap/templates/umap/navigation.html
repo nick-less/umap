@@ -23,6 +23,8 @@
   </section>
 
   <section>
+    {% if user.is_authenticated %}
     <a href="{% url 'map_new' %}" class="button">{% trans "Create a map" %}</a>
+    {% endif %}
   </section>
 </nav>

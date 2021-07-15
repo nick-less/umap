@@ -28,4 +28,9 @@ python manage.py collectstatic --noinput
 # compress static files
 python manage.py compress
 # run uWSGI
-exec uwsgi --ini uwsgi.ini
+while :
+do
+	echo "Press [CTRL+C] to stop.."
+  exec uwsgi --ini uwsgi.ini
+	sleep 1
+done

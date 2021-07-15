@@ -150,6 +150,7 @@ L.U.DataLayer = L.Evented.extend({
 
     options: {
         displayOnLoad: true,
+        protected: false,
         browsable: true
     },
 
@@ -723,8 +724,9 @@ L.U.DataLayer = L.Evented.extend({
                 'options.description',
                 ['options.type', {handler: 'LayerTypeChooser', label: L._('Type of layer')}],
                 ['options.displayOnLoad', {label: L._('Display on load'), handler: 'Switch'}],
-                ['options.browsable', {label: L._('Data is browsable'), handler: 'Switch', helpEntries: 'browsable'}]
-            ];
+                ['options.browsable', {label: L._('Data is browsable'), handler: 'Switch', helpEntries: 'browsable'}],
+                ['options.protected', {label: L._('Protected'), handler: 'Switch'}]
+        ];
         var title = L.DomUtil.add('h3', '', container, L._('Layer properties'));
         var builder = new L.U.FormBuilder(this, metadataFields, {
             callback: function (e) {
@@ -991,7 +993,8 @@ L.U.DataLayer = L.Evented.extend({
         return {
             id: this.umap_id,
             name: this.options.name,
-            displayOnLoad: this.options.displayOnLoad
+            displayOnLoad: this.options.displayOnLoad,
+            protected: this.options.protected
         }
     },
 
@@ -1006,6 +1009,7 @@ L.U.DataLayer = L.Evented.extend({
         var formData = new FormData();
         formData.append('name', this.options.name);
         formData.append('display_on_load', !!this.options.displayOnLoad);
+        formData.append('protected', !!this.options.protected);
         formData.append('rank', this.getRank());
         // Filename support is shaky, don't do it for now.
         var blob = new Blob([JSON.stringify(geojson)], {type: 'application/json'});
@@ -1013,6 +1017,12 @@ L.U.DataLayer = L.Evented.extend({
         this.map.post(this.getSaveUrl(), {
             data: formData,
             callback: function (data, response) {
+                // Response contains geojson only if save has conflicted and conflicts have
+                // been resolved. So we need to reload to get extra data (saved from someone else)
+                if (data.geojson) {
+                    this.clear();
+                    this.fromGeoJSON(data.geojson);
+                }
                 this._geojson = geojson;
                 this._etag = response.getResponseHeader('ETag');
                 this.setUmapId(data.id);

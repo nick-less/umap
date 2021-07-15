@@ -578,25 +578,31 @@ L.U.DataLayer.include({
 
     renderToolbox: function (container) {
         var toggle = L.DomUtil.create('i', 'layer-toggle', container),
-            zoomTo = L.DomUtil.create('i', 'layer-zoom_to', container),
-            edit = L.DomUtil.create('i', 'layer-edit show-on-edit', container),
-            table = L.DomUtil.create('i', 'layer-table-edit show-on-edit', container),
-            remove = L.DomUtil.create('i', 'layer-delete show-on-edit', container);
+            zoomTo = L.DomUtil.create('i', 'layer-zoom_to', container);
+
         zoomTo.title = L._('Zoom to layer extent');
         toggle.title = L._('Show/hide layer');
-        edit.title = L._('Edit');
-        table.title = L._('Edit properties in a table');
-        remove.title = L._('Delete layer');
+        if (this.map.options.allowFullEdit || !this.options.protected) {
+            var edit = L.DomUtil.create('i', 'layer-edit show-on-edit', container),
+            table = L.DomUtil.create('i', 'layer-table-edit show-on-edit', container),
+            remove = L.DomUtil.create('i', 'layer-delete show-on-edit', container);
+            edit.title = L._('Edit');
+            table.title = L._('Edit properties in a table');
+            remove.title = L._('Delete layer');
+            L.DomEvent.on(edit, 'click', this.edit, this);
+            L.DomEvent.on(table, 'click', this.tableEdit, this);
+            L.DomEvent.on(remove, 'click', function () {
+                        if (!this.isVisible()) return;
+                        if (!confirm(L._('Are you sure you want to delete this layer?'))) return;
+                        this._delete();
+                        this.map.ui.closePanel();
+                    }, this);
+        
+        }
+
+
         L.DomEvent.on(toggle, 'click', this.toggle, this);
         L.DomEvent.on(zoomTo, 'click', this.zoomTo, this);
-        L.DomEvent.on(edit, 'click', this.edit, this);
-        L.DomEvent.on(table, 'click', this.tableEdit, this);
-        L.DomEvent.on(remove, 'click', function () {
-                    if (!this.isVisible()) return;
-                    if (!confirm(L._('Are you sure you want to delete this layer?'))) return;
-                    this._delete();
-                    this.map.ui.closePanel();
-                }, this);
         L.DomUtil.addClass(container, this.getHidableClass());
         L.DomUtil.classIf(container, 'off', !this.isVisible());
         container.dataset.id = L.stamp(this);
@@ -726,12 +732,30 @@ L.U.Map.include({
         L.bind(appendAll, this)();
         L.DomEvent.on(filter, 'input', appendAll, this);
         L.DomEvent.on(filter, 'input', resetLayers, this);
+
+
+
         var link = L.DomUtil.create('li', '');
         L.DomUtil.create('i', 'umap-icon-16 umap-caption', link);
         var label = L.DomUtil.create('span', '', link);
         label.textContent = label.title = L._('About');
         L.DomEvent.on(link, 'click', this.displayCaption, this);
-        this.ui.openPanel({data: {html: browserContainer}, actions: [link]});
+
+        var actions = [link];
+
+        if (MAP.options.isAnonymous) {
+            var loginLink = L.DomUtil.create('li', '');
+            L.DomUtil.create('i', 'umap-caption', loginLink);
+            var loginButton = L.DomUtil.create('span', '', loginLink);
+            loginButton.textContent = loginButton.title = L._('Login');
+            L.DomEvent.on(loginButton, 'click', function () {MAP.xhr.login({"login_required":'/de/login', 'redirect':window.location.pathname});}, this);
+            actions = [link, loginLink];
+        }
+
+
+        this.ui.openPanel({data: {html: browserContainer}, actions: actions});
+
+
     }
 
 });
@@ -802,9 +826,6 @@ L.U.AttributionControl = L.Control.Attribution.extend({
 
     _update: function () {
         L.Control.Attribution.prototype._update.call(this);
-        if (this._map.options.shortCredit) {
-            L.DomUtil.add('span', '', this._container, ' — ' + L.Util.toHTML(this._map.options.shortCredit));
-        }
         var link = L.DomUtil.add('a', '', this._container, ' — ' + L._('About'));
         L.DomEvent
             .on(link, 'click', L.DomEvent.stop)
@@ -814,6 +835,9 @@ L.U.AttributionControl = L.Control.Attribution.extend({
             // We are not in iframe mode
             var home = L.DomUtil.add('a', '', this._container, ' — ' + L._('Home'));
             home.href = '/';
+        }
+        if (this._map.options.shortCredit) {
+            L.DomUtil.add('span', '', this._container, ' — ' + L.Util.toHTML(this._map.options.shortCredit));
         }
     }
 

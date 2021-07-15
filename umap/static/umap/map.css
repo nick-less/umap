@@ -557,7 +557,7 @@ ul.photon-autocomplete {
     border-radius: 2px;
 }
 .leaflet-control-browse .umap-browse-datalayers {
-    max-height: 10em;
+    max-height: 25em;
     overflow-y: auto;
 }
 .search-result-tools i,
@@ -1058,6 +1058,22 @@ a.add-datalayer:hover,
     height: 12px;
     width: 12px;
 }
+
+.umap-circle-icon-medium {
+    border: 1px solid white;
+    border-radius: 20px 20px 20px 20px;
+    height: 22px;
+    width: 22px;
+}
+
+.umap-circle-icon-big {
+    border: 1px solid white;
+    border-radius: 30px 30px 30px 30px;
+    height: 32px;
+    width: 32px;
+}
+
+
 .umap-ball-icon .icon_container {
     background-color: darkblue;
     background: radial-gradient(circle at 6px 38% , white -4px, darkblue 8px) repeat scroll 0 0 transparent;
@@ -1347,18 +1363,23 @@ a.add-datalayer:hover,
 }
 
 
-/* via logo */
-.leaflet-control-container::before  {
-    position: absolute;
-    background-image: url(img/Logovia_bunt.jpg);
-    background-size: contain;
-    top: 16px;
-    left: 64px;
-    width: 177px;
-    height: 110px;
-    z-index: 10000;
-    content: " ";
+.umap-icon-big {
+    font-size: 48px !important;
 }
+
+.umap-icon-default {
+    font-size: 32px !important;
+}
+
+.umap-icon-medium {
+    font-size: 20px !important;
+}
+
+.umap-icon-small {
+    font-size: 12px !important;
+}
+
+
 
 /* ****** */
 /* Mobile */

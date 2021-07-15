@@ -20,5 +20,5 @@ dist/
 .python-version
 *.log
 .vagrant
-target/
-var/
+umap/version.txt
+.DS_Store

@@ -194,9 +194,21 @@ L.FormBuilder.IconClassSwitcher = L.FormBuilder.Select.extend({
 
     selectOptions: [
         ['Default', L._('Default')],
-        ['Circle', L._('Circle')],
+        ['Circle', L._('Circle Small')],
+        ['CircleMed', L._('Circle Medium')],
+        ['CircleBig', L._('Circle Big')],
         ['Drop', L._('Drop')],
-        ['Ball', L._('Ball')]
+        ['DropBig', L._('Drop New')],
+        ['DropMed', L._('Drop Medium')],
+        ['DropSm', L._('Drop Small')],
+        ['Ball', L._('Ball')],
+        ['Diamond', L._('Diamond')],
+        ['House', L._('House')],
+        ['Sandglass', L._('Sandglass')],
+        ['Sign', L._('Sign')],
+        ['Square', L._('Square')],
+        ['Triangle', L._('Triangle')],
+        ['XForm', L._('X-Form')]
     ]
 
 });
@@ -259,9 +271,12 @@ L.FormBuilder.DataLayerSwitcher = L.FormBuilder.Select.extend({
 
     getOptions: function () {
         var options = [];
+        var that = this;
         this.builder.map.eachDataLayerReverse(function (datalayer) {
             if(datalayer.isLoaded() && !datalayer.isRemoteLayer() && datalayer.canBrowse()) {
-                options.push([L.stamp(datalayer), datalayer.getName()]);
+                if (that.builder.map.options.allowFullEdit || !datalayer.options.protected) {
+                    options.push([L.stamp(datalayer), datalayer.getName()]);
+                }
             }
         });
         return options;
