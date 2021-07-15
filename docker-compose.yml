@@ -21,7 +21,7 @@ services:
     ports:
       - "127.0.0.1:7000:8000"
     environment:
-      - DATABASE_URL=postgis://umap:umap@db5453/umap
+      - DATABASE_URL=postgis://umap:umap@db:5452/umap
       - REDIS_URL=redis://redis:6379/0
       - SECRET_KEY=${SECRET_KEY}
       - ALLOWED_HOSTS=*
