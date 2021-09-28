@@ -111,7 +111,6 @@ def gzip_file(from_path, to_path):
         with gzip.open(to_path, "wb") as f_out:
             f_out.writelines(f_in)
 
-
 def merge_conflicts(reference, latest, entrant):
 
     # Just in case (eg. both removed the same element, or changed only metadatas)
@@ -145,3 +144,6 @@ def merge_conflicts(reference, latest, entrant):
     for feature in entrant:
         latest.append(feature)
     return latest
+
+def is_ajax(request):
+    return request.headers.get('x-requested-with') == 'XMLHttpRequest'
