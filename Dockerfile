@@ -3,7 +3,7 @@ FROM python:3.9.4-alpine3.13
 RUN mkdir -p /srv/umap/data && \
     mkdir -p /srv/umap/uploads
 
-ADD requirements.txt /srv/umap/requirements.txt
+ADD setup.cfg /srv/umap/setup.cfg
 ADD docker-entrypoint.sh /srv/umap/docker-entrypoint.sh
 
 RUN set -ex \
