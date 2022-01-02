@@ -4,6 +4,7 @@ RUN mkdir -p /srv/umap/data && \
     mkdir -p /srv/umap/uploads
 
 ADD setup.cfg /srv/umap/setup.cfg
+ADD setup.py /srv/umap/setup.py
 ADD docker-entrypoint.sh /srv/umap/docker-entrypoint.sh
 
 RUN set -ex \
