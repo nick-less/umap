@@ -12,7 +12,7 @@ RUN set -ex \
     && python -m venv /env \
     && python -m pip install -U pip \
     && /env/bin/pip install --upgrade pip \
-    && /env/bin/pip install --no-cache-dir . \
+    && /env/bin/pip install --no-cache-dir /srv/umap \
     && runDeps="$(scanelf --needed --nobanner --recursive /env \
         | awk '{ gsub(/,/, "\nso:", $2); print "so:" $2 }' \
         | sort -u \
