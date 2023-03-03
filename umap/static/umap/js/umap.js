@@ -1,6 +1,5 @@
 L.Map.mergeOptions({
-    base_layers: null,
-    overlay_layers: null,
+    overlay: null,
     datalayers: [],
     center: [4, 50],
     zoom: 6,
@@ -43,10 +42,12 @@ L.Map.mergeOptions({
     ],
     moreControl: true,
     captionBar: false,
+    captionMenus: true,
     slideshow: {},
     clickable: true,
     easing: true,
-    permissions: {}
+    permissions: {},
+    permanentCreditBackground: true,
 });
 
 L.U.Map.include({
@@ -88,6 +89,7 @@ L.U.Map.include({
         L.Util.setBooleanFromQueryString(this.options, 'displayDataBrowserOnLoad');
         L.Util.setBooleanFromQueryString(this.options, 'displayCaptionOnLoad');
         L.Util.setBooleanFromQueryString(this.options, 'captionBar');
+        L.Util.setBooleanFromQueryString(this.options, 'captionMenus');
         for (var i = 0; i < this.HIDDABLE_CONTROLS.length; i++) {
             L.Util.setNullableBooleanFromQueryString(this.options, this.HIDDABLE_CONTROLS[i] + 'Control');
         }
@@ -210,6 +212,7 @@ L.U.Map.include({
         this.onceDatalayersLoaded(function () {
             if (this.options.onLoadPanel === 'databrowser') this.openBrowser();
             else if (this.options.onLoadPanel === 'caption') this.displayCaption();
+            else if (this.options.onLoadPanel === 'datafilters') this.openFilter();
         });
         this.onceDataLoaded(function () {
             const slug = L.Util.queryString('feature');
@@ -277,6 +280,7 @@ L.U.Map.include({
         this._controls.measure = (new L.MeasureControl()).initHandler(this);
         this._controls.more = new L.U.MoreControls();
         this._controls.scale = L.control.scale();
+        this._controls.permanentCredit = new L.U.PermanentCreditsControl(this);
         if (this.options.scrollWheelZoom) this.scrollWheelZoom.enable();
         else this.scrollWheelZoom.disable();
         this.renderControls();
@@ -309,6 +313,7 @@ L.U.Map.include({
             if (status === undefined || status === null) L.DomUtil.addClass(control._container, 'display-on-more');
             else L.DomUtil.removeClass(control._container, 'display-on-more');
         }
+        if (this.options.permanentCredit) this._controls.permanentCredit.addTo(this);
         if (this.options.moreControl) this._controls.more.addTo(this);
         if (this.options.scaleControl) this._controls.scale.addTo(this);
     },
@@ -505,6 +510,7 @@ L.U.Map.include({
             // Users can put tilelayer URLs by hand, and if they add wrong {variable},
             // Leaflet throw an error, and then the map is no more editable
         }
+        this.setOverlay()
     },
 
     eachTileLayer: function (method, context) {
@@ -517,6 +523,20 @@ L.U.Map.include({
         }
         if (this.customTilelayer && (Array.prototype.indexOf && urls.indexOf(this.customTilelayer._url) === -1)) {
             method.call(context || this, this.customTilelayer);
+        }
+    },
+
+    setOverlay: function () {
+        if (!this.options.overlay || !this.options.overlay.url_template) return;
+        var overlay = this.createTileLayer(this.options.overlay);
+        try {
+            this.addLayer(overlay);
+            if (this.overlay) this.removeLayer(this.overlay);
+            this.overlay = overlay;
+        } catch (e) {
+            this.removeLayer(overlay);
+            console.error(e);
+            this.ui.alert({content: L._('Error in the overlay URL') + ': ' + overlay._url, level: 'error'});
         }
     },
 
@@ -629,7 +649,8 @@ L.U.Map.include({
             'queryString.miniMap',
             'queryString.scaleControl',
             'queryString.onLoadPanel',
-            'queryString.captionBar'
+            'queryString.captionBar',
+            'queryString.captionMenus'
         ];
         for (var i = 0; i < this.HIDDABLE_CONTROLS.length; i++) {
             UIFields.push('queryString.' + this.HIDDABLE_CONTROLS[i] + 'Control');
@@ -760,7 +781,7 @@ L.U.Map.include({
         clearFlag.type = 'checkbox';
         clearFlag.name = 'clear';
         this.eachDataLayerReverse(function (datalayer) {
-            if (datalayer.isLoaded()) {
+            if (datalayer.isLoaded() && !datalayer.isRemoteLayer()) {
                 var id = L.stamp(datalayer);
                 option = L.DomUtil.create('option', '', layerInput);
                 option.value = id;
@@ -897,6 +918,12 @@ L.U.Map.include({
         });
     },
 
+    openFilter: function () {
+        this.onceDatalayersLoaded(function () {
+            this._openFilter();
+        });
+    },
+
     displayCaption: function () {
         var container = L.DomUtil.create('div', 'umap-caption'),
             title = L.DomUtil.create('h3', '', container);
@@ -952,10 +979,19 @@ L.U.Map.include({
         umapCredit.innerHTML = L._('Powered by <a href="{leaflet}">Leaflet</a> and <a href="{django}">Django</a>, glued by <a href="{umap}">uMap project</a>.', urls);
         var browser = L.DomUtil.create('li', '');
         L.DomUtil.create('i', 'umap-icon-16 umap-list', browser);
-        var label = L.DomUtil.create('span', '', browser);
-        label.textContent = label.title = L._('Browse data');
+        var labelBrowser = L.DomUtil.create('span', '', browser);
+        labelBrowser.textContent = labelBrowser.title = L._('Browse data');
         L.DomEvent.on(browser, 'click', this.openBrowser, this);
-        this.ui.openPanel({data: {html: container}, actions: [browser]});
+        var actions = [browser];
+        if (this.options.advancedFilterKey) {
+            var filter = L.DomUtil.create('li', '');
+            L.DomUtil.create('i', 'umap-icon-16 umap-add', filter);
+            var labelFilter = L.DomUtil.create('span', '', filter);
+            labelFilter.textContent = labelFilter.title = L._('Select data');
+            L.DomEvent.on(filter, 'click', this.openFilter, this);
+            actions.push(filter)
+        }
+        this.ui.openPanel({data: {html: container}, actions: actions});
     },
 
     eachDataLayer: function (method, context) {
@@ -1041,6 +1077,7 @@ L.U.Map.include({
         'description',
         'licence',
         'tilelayer',
+        'overlay',
         'limitBounds',
         'color',
         'iconClass',
@@ -1057,16 +1094,20 @@ L.U.Map.include({
         'popupContentTemplate',
         'zoomTo',
         'captionBar',
+        'captionMenus',
         'slideshow',
         'sortKey',
         'labelKey',
         'filterKey',
+        'advancedFilterKey',
         'slugKey',
         'showLabel',
         'labelDirection',
         'labelInteractive',
         'shortCredit',
         'longCredit',
+        'permanentCredit',
+        'permanentCreditBackground',
         'zoomControl',
         'datalayersControl',
         'searchControl',
@@ -1196,18 +1237,7 @@ L.U.Map.include({
         return this.findDataLayer(function (d) { return d.umap_id == umap_id; });
     },
 
-    edit: function () {
-        if(!this.editEnabled) return;
-        var container = L.DomUtil.create('div','umap-edit-container'),
-            metadataFields = [
-                'options.name',
-                'options.description'
-            ],
-            title = L.DomUtil.create('h4', '', container);
-        title.textContent = L._('Edit map properties');
-        var builder = new L.U.FormBuilder(this, metadataFields);
-        var form = builder.build();
-        container.appendChild(form);
+    _editControls: function (container) {
         var UIFields = [];
         for (var i = 0; i < this.HIDDABLE_CONTROLS.length; i++) {
             UIFields.push('options.' + this.HIDDABLE_CONTROLS[i] + 'Control');
@@ -1219,15 +1249,21 @@ L.U.Map.include({
             'options.scaleControl',
             'options.onLoadPanel',
             'options.displayPopupFooter',
-            'options.captionBar'
+            'options.captionBar',
+            'options.captionMenus'
         ]);
         builder = new L.U.FormBuilder(this, UIFields, {
-            callback: this.renderControls,
+            callback: function() {
+                this.renderControls();
+                this.initCaptionBar();
+            },
             callbackContext: this
         });
         var controlsOptions = L.DomUtil.createFieldset(container, L._('User interface options'));
         controlsOptions.appendChild(builder.build());
+    },
 
+    _editShapeProperties: function (container) {
         var shapeOptions = [
             'options.color',
             'options.iconClass',
@@ -1248,7 +1284,9 @@ L.U.Map.include({
         });
         var defaultShapeProperties = L.DomUtil.createFieldset(container, L._('Default shape properties'));
         defaultShapeProperties.appendChild(builder.build());
+    },
 
+    _editDefaultProperties: function (container) {
         var optionsFields = [
             'options.smoothFactor',
             'options.dashArray',
@@ -1257,11 +1295,13 @@ L.U.Map.include({
             'options.labelKey',
             ['options.sortKey', {handler: 'BlurInput', helpEntries: 'sortKey', placeholder: L._('Default: name'), label: L._('Sort key'), inheritable: true}],
             ['options.filterKey', {handler: 'Input', helpEntries: 'filterKey', placeholder: L._('Default: name'), label: L._('Filter keys'), inheritable: true}],
+            ['options.advancedFilterKey', {handler: 'Input', helpEntries: 'advancedFilterKey', placeholder: L._('Example: key1,key2,key3'), label: L._('Advanced filter keys'), inheritable: true}],
             ['options.slugKey', {handler: 'BlurInput', helpEntries: 'slugKey', placeholder: L._('Default: name'), label: L._('Feature identifier key')}]
         ];
 
         builder = new L.U.FormBuilder(this, optionsFields, {
             callback: function (e) {
+                this.initCaptionBar();
                 this.eachDataLayer(function (datalayer) {
                     if (e.helper.field === 'options.sortKey') datalayer.reindex();
                     datalayer.redraw();
@@ -1270,7 +1310,9 @@ L.U.Map.include({
         });
         var defaultProperties = L.DomUtil.createFieldset(container, L._('Default properties'));
         defaultProperties.appendChild(builder.build());
+    },
 
+    _editInteractionsProperties: function (container) {
         var popupFields = [
             'options.popupShape',
             'options.popupTemplate',
@@ -1289,7 +1331,9 @@ L.U.Map.include({
         });
         var popupFieldset = L.DomUtil.createFieldset(container, L._('Default interaction options'));
         popupFieldset.appendChild(builder.build());
+    },
 
+    _editTilelayer: function (container) {
         if (!L.Util.isObject(this.options.tilelayer)) {
             this.options.tilelayer = {};
         }
@@ -1307,7 +1351,29 @@ L.U.Map.include({
             callbackContext: this
         });
         customTilelayer.appendChild(builder.build());
+    },
 
+    _editOverlay: function (container) {
+        if (!L.Util.isObject(this.options.overlay)) {
+            this.options.overlay = {};
+        }
+        var overlayFields = [
+            ['options.overlay.url_template', {handler: 'BlurInput', helpText: L._('Supported scheme') + ': http://{s}.domain.com/{z}/{x}/{y}.png', placeholder: 'url', helpText: L._('Background overlay url')}],
+            ['options.overlay.maxZoom', {handler: 'BlurIntInput', placeholder: L._('max zoom')}],
+            ['options.overlay.minZoom', {handler: 'BlurIntInput', placeholder: L._('min zoom')}],
+            ['options.overlay.attribution', {handler: 'BlurInput', placeholder: L._('attribution')}],
+            ['options.overlay.opacity', {handler: 'Range', min: 0, max: 1, step: 'any', placeholder: L._('opacity')}],
+            ['options.overlay.tms', {handler: 'Switch', label: L._('TMS format')}]
+        ];
+        var overlay = L.DomUtil.createFieldset(container, L._('Custom overlay'));
+        builder = new L.U.FormBuilder(this, overlayFields, {
+            callback: this.initTileLayers,
+            callbackContext: this
+        });
+        overlay.appendChild(builder.build());
+    },
+
+    _editBounds: function (container) {
         if (!L.Util.isObject(this.options.limitBounds)) {
             this.options.limitBounds = {};
         }
@@ -1347,7 +1413,9 @@ L.U.Map.include({
             this.isDirty = true;
             this.handleLimitBounds();
         }, this);
+    },
 
+    _editSlideshow: function (container) {
         var slideshow = L.DomUtil.createFieldset(container, L._('Slideshow'));
         var slideshowFields = [
             ['options.slideshow.active', {handler: 'Switch', label: L._('Activate slideshow mode')}],
@@ -1364,19 +1432,25 @@ L.U.Map.include({
             callbackContext: this
         });
         slideshow.appendChild(slideshowBuilder.build());
+    },
 
+    _editCredits: function (container) {
         var credits = L.DomUtil.createFieldset(container, L._('Credits'));
         var creditsFields = [
             ['options.licence', {handler: 'LicenceChooser', label: L._('licence')}],
             ['options.shortCredit', {handler: 'Input', label: L._('Short credits'), helpEntries: ['shortCredit', 'textFormatting']}],
-            ['options.longCredit', {handler: 'Textarea', label: L._('Long credits'), helpEntries: ['longCredit', 'textFormatting']}]
+            ['options.longCredit', {handler: 'Textarea', label: L._('Long credits'), helpEntries: ['longCredit', 'textFormatting']}],
+            ['options.permanentCredit', {handler: 'Textarea', label: L._('Permanent credits'), helpEntries: ['permanentCredit', 'textFormatting']}],
+            ['options.permanentCreditBackground', {handler: 'Switch', label: L._('Permanent credits background')}]
         ];
         var creditsBuilder = new L.U.FormBuilder(this, creditsFields, {
-            callback: function () {this._controls.attribution._update();},
+            callback: this.renderControls,
             callbackContext: this
         });
         credits.appendChild(creditsBuilder.build());
+    },
 
+    _advancedActions: function (container) {
         var advancedActions = L.DomUtil.createFieldset(container, L._('Advanced actions'));
         var advancedButtons = L.DomUtil.create('div', 'button-bar half', advancedActions);
         var del = L.DomUtil.create('a', 'button umap-delete', advancedButtons);
@@ -1406,6 +1480,31 @@ L.U.Map.include({
         L.DomEvent
             .on(download, 'click', L.DomEvent.stop)
             .on(download, 'click', this.renderShareBox, this);
+    },
+
+    edit: function () {
+        if(!this.editEnabled) return;
+        var container = L.DomUtil.create('div','umap-edit-container'),
+            metadataFields = [
+                'options.name',
+                'options.description'
+            ],
+            title = L.DomUtil.create('h4', '', container);
+        title.textContent = L._('Edit map properties');
+        var builder = new L.U.FormBuilder(this, metadataFields);
+        var form = builder.build();
+        container.appendChild(form);
+        this._editControls(container);
+        this._editShapeProperties(container);
+        this._editDefaultProperties(container);
+        this._editInteractionsProperties(container);
+        this._editTilelayer(container);
+        this._editOverlay(container);
+        this._editBounds(container);
+        this._editSlideshow(container);
+        this._editCredits(container);
+        this._advancedActions(container);
+
         this.ui.openPanel({data: {html: container}, className: 'dark'});
     },
 
@@ -1432,13 +1531,21 @@ L.U.Map.include({
             name = L.DomUtil.create('h3', '', container);
         L.DomEvent.disableClickPropagation(container);
         this.permissions.addOwnerLink('span', container);
-        var about = L.DomUtil.add('a', 'umap-about-link', container, ' — ' + L._('About'));
-        about.href = '#';
-        L.DomEvent.on(about, 'click', this.displayCaption, this);
-        var browser = L.DomUtil.add('a', 'umap-open-browser-link', container, ' | ' + L._('Browse data'));
-        browser.href = '#';
-        L.DomEvent.on(browser, 'click', L.DomEvent.stop)
-                  .on(browser, 'click', this.openBrowser, this);
+        if (this.options.captionMenus) {
+            var about = L.DomUtil.add('a', 'umap-about-link', container, ' — ' + L._('About'));
+            about.href = '#';
+            L.DomEvent.on(about, 'click', this.displayCaption, this);
+            var browser = L.DomUtil.add('a', 'umap-open-browser-link', container, ' | ' + L._('Browse data'));
+            browser.href = '#';
+            L.DomEvent.on(browser, 'click', L.DomEvent.stop)
+                    .on(browser, 'click', this.openBrowser, this);
+            if (this.options.advancedFilterKey) {
+                var filter = L.DomUtil.add('a', 'umap-open-filter-link', container, ' | ' + L._('Select data'));
+                filter.href = '#';
+                L.DomEvent.on(filter, 'click', L.DomEvent.stop)
+                    .on(filter, 'click', this.openFilter, this);
+            }
+        }
         var setName = function () {
             name.textContent = this.getDisplayName();
         };
@@ -1619,11 +1726,17 @@ L.U.Map.include({
                 });
             }
         }
-        items.push('-',
-            {
-                text: L._('Browse data'),
-                callback: this.openBrowser
-            },
+        items.push('-', {
+            text: L._('Browse data'),
+            callback: this.openBrowser
+        });
+        if (this.options.advancedFilterKey) {
+            items.push({
+                text: L._('Select data'),
+                callback: this.openFilter
+            })
+        }
+        items.push(
             {
                 text: L._('About'),
                 callback: this.displayCaption
@@ -1702,6 +1815,10 @@ L.U.Map.include({
 
     getFilterKeys: function () {
         return (this.options.filterKey || this.options.sortKey || 'name').split(',');
+    },
+
+    getAdvancedFilterKeys: function () {
+        return (this.options.advancedFilterKey || '').split(",");
     }
 
 });

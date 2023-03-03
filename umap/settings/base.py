@@ -30,13 +30,18 @@ LANG_INFO.update({
         'name': 'Sinhala',
         'name_local': 'සිංහල',
     },
+    "ms": {
+        "bidi": False,
+        "code": "ms",
+        "name": "Malay",
+        "name_local": "Bahasa Melayu",
+    },
 })
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 TIME_ZONE = 'UTC'
 USE_TZ = True
 USE_I18N = True
-USE_L10N = True
 LANGUAGE_CODE = 'en'
 LANGUAGES = (
     ('am-et', 'Amharic'),
@@ -51,6 +56,7 @@ LANGUAGES = (
     ('en', 'English'),
     ('es', 'Spanish'),
     ('et', 'Estonian'),
+    ('fa-ir', 'Persian (Iran)'),
     ('fi', 'Finnish'),
     ('fr', 'French'),
     ('gl', 'Galician'),
@@ -63,9 +69,11 @@ LANGUAGES = (
     ('ja', 'Japanese'),
     ('ko', 'Korean'),
     ('lt', 'Lithuanian'),
+    ('ms', 'Malay'),
     ('nl', 'Dutch'),
     ('no', 'Norwegian'),
     ('pl', 'Polish'),
+    ('pt', 'Portuguese'),
     ('pt-br', 'Portuguese (Brazil)'),
     ('pt-pt', 'Portuguese (Portugal)'),
     ('ro', 'Romanian'),
@@ -99,7 +107,10 @@ INSTALLED_APPS = (
     'umap',
     'compressor',
     'social_django',
-    'agnocomplete',
+    # See https://github.com/peopledoc/django-agnocomplete/commit/26eda2dfa4a2f8a805ca2ea19a0c504b9d773a1c
+    # Django does not find the app config in the default place, so the app is not loaded
+    # so the "autodiscover" is not run.
+    'agnocomplete.app.AgnocompleteConfig',
 )
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
@@ -213,6 +224,7 @@ DATABASES = {
     }
 }
 UMAP_READONLY = False
+UMAP_GZIP = True
 LOCALE_PATHS = [os.path.join(PROJECT_DIR, 'locale')]
 
 # =============================================================================

@@ -18,18 +18,13 @@ def post_data():
         "name": "name",
         "display_on_load": True,
         "rank": 0,
-        "geojson": SimpleUploadedFile(
-            "name.json",
-            b'{"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[-3.1640625,53.014783245859235],[-3.1640625,51.86292391360244],[-0.50537109375,51.385495069223204],[1.16455078125,52.38901106223456],[-0.41748046875,53.91728101547621],[-2.109375,53.85252660044951],[-3.1640625,53.014783245859235]]]},"properties":{"_umap_options":{},"name":"Ho god, sounds like a polygouine"}},{"type":"Feature","geometry":{"type":"LineString","coordinates":[[1.8017578124999998,51.16556659836182],[-0.48339843749999994,49.710272582105695],[-3.1640625,50.0923932109388],[-5.60302734375,51.998410382390325]]},"properties":{"_umap_options":{},"name":"Light line"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[0.63720703125,51.15178610143037]},"properties":{"_umap_options":{},"name":"marker he"}}],"_umap_options":{"displayOnLoad":true,"name":"new name","id":1668,"remoteData":{},"color":"LightSeaGreen","description":"test"}}',
-        ),  # noqa
+        "geojson": '{"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[-3.1640625,53.014783245859235],[-3.1640625,51.86292391360244],[-0.50537109375,51.385495069223204],[1.16455078125,52.38901106223456],[-0.41748046875,53.91728101547621],[-2.109375,53.85252660044951],[-3.1640625,53.014783245859235]]]},"properties":{"_umap_options":{},"name":"Ho god, sounds like a polygouine"}},{"type":"Feature","geometry":{"type":"LineString","coordinates":[[1.8017578124999998,51.16556659836182],[-0.48339843749999994,49.710272582105695],[-3.1640625,50.0923932109388],[-5.60302734375,51.998410382390325]]},"properties":{"_umap_options":{},"name":"Light line"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[0.63720703125,51.15178610143037]},"properties":{"_umap_options":{},"name":"marker he"}}],"_umap_options":{"displayOnLoad":true,"name":"new name","id":1668,"remoteData":{},"color":"LightSeaGreen","description":"test"}}',
     }
 
 
 def test_get(client, settings, datalayer):
     url = reverse("datalayer_view", args=(datalayer.pk,))
     response = client.get(url)
-    if getattr(settings, "UMAP_XSENDFILE_HEADER", None):
-        assert response["ETag"] is not None
     assert response["Last-Modified"] is not None
     assert response["Cache-Control"] is not None
     assert "Content-Encoding" not in response
@@ -57,7 +52,9 @@ def test_update(client, datalayer, map, post_data):
     assert datalayer.pk == j["id"]
 
 
-def test_should_not_be_possible_to_update_with_wrong_map_id_in_url(client, datalayer, map, post_data):  # noqa
+def test_should_not_be_possible_to_update_with_wrong_map_id_in_url(
+    client, datalayer, map, post_data
+):
     other_map = MapFactory(owner=map.owner)
     url = reverse("datalayer_update", args=(other_map.pk, datalayer.pk))
     client.login(username=map.owner.username, password="123123")
@@ -82,7 +79,9 @@ def test_delete(client, datalayer, map):
     assert "info" in j
 
 
-def test_should_not_be_possible_to_delete_with_wrong_map_id_in_url(client, datalayer, map):  # noqa
+def test_should_not_be_possible_to_delete_with_wrong_map_id_in_url(
+    client, datalayer, map
+):
     other_map = MapFactory(owner=map.owner)
     url = reverse("datalayer_delete", args=(other_map.pk, datalayer.pk))
     client.login(username=map.owner.username, password="123123")
@@ -101,38 +100,43 @@ def test_get_gzipped(client, datalayer, settings):
     assert response["Content-Encoding"] == "gzip"
 
 
-def test_optimistic_concurrency_control_with_good_etag(client, datalayer, map, post_data):  # noqa
-    # Get Etag
-    url = reverse("datalayer_view", args=(datalayer.pk,))
-    response = client.get(url)
-    etag = response["ETag"]
+def test_optimistic_concurrency_control_with_good_last_modified(
+    client, datalayer, map, post_data
+):
+    # Get Last-Modified
     url = reverse("datalayer_update", args=(map.pk, datalayer.pk))
     client.login(username=map.owner.username, password="123123")
     name = "new name"
     post_data["name"] = "new name"
-    response = client.post(url, post_data, follow=True, HTTP_IF_MATCH=etag)
+    response = client.post(
+        url, post_data, follow=True, HTTP_IF_UNMODIFIED_SINCE=last_modified
+    )
     assert response.status_code == 200
     modified_datalayer = DataLayer.objects.get(pk=datalayer.pk)
     assert modified_datalayer.name == name
 
 
-def test_optimistic_concurrency_control_with_bad_etag(client, datalayer, map, post_data):
+def test_optimistic_concurrency_control_with_bad_last_modified(
+    client, datalayer, map, post_data
+):
     url = reverse("datalayer_update", args=(map.pk, datalayer.pk))
     client.login(username=map.owner.username, password="123123")
     name = "new name"
     post_data["name"] = name
-    response = client.post(url, post_data, follow=True, HTTP_IF_MATCH="xxx")
+    response = client.post(url, post_data, follow=True, HTTP_IF_UNMODIFIED_SINCE="xxx")
     assert response.status_code == 412
     modified_datalayer = DataLayer.objects.get(pk=datalayer.pk)
     assert modified_datalayer.name != name
 
 
-def test_optimistic_concurrency_control_with_empty_etag(client, datalayer, map, post_data):
+def test_optimistic_concurrency_control_with_empty_last_modified(
+    client, datalayer, map, post_data
+):
     url = reverse("datalayer_update", args=(map.pk, datalayer.pk))
     client.login(username=map.owner.username, password="123123")
     name = "new name"
     post_data["name"] = name
-    response = client.post(url, post_data, follow=True, HTTP_IF_MATCH=None)
+    response = client.post(url, post_data, follow=True, HTTP_IF_UNMODIFIED_SINCE=None)
     assert response.status_code == 200
     modified_datalayer = DataLayer.objects.get(pk=datalayer.pk)
     assert modified_datalayer.name == name

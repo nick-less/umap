@@ -1,4 +1,5 @@
 import gzip
+import os
 
 from django.urls import get_resolver
 from django.urls import URLPattern, URLResolver
@@ -24,7 +25,7 @@ def get_uri_template(urlname, args=None, prefix=""):
         if not args:
             args = []
         paths = template % dict([p, "{%s}" % p] for p in args)
-        return u"%s/%s" % (prefix, paths)
+        return "%s/%s" % (prefix, paths)
 
     resolver = get_resolver(None)
     parts = urlname.split(":")
@@ -107,43 +108,11 @@ def decorated_patterns(func, *urls):
 
 
 def gzip_file(from_path, to_path):
+    stat = os.stat(from_path)
     with open(from_path, "rb") as f_in:
         with gzip.open(to_path, "wb") as f_out:
             f_out.writelines(f_in)
 
-def merge_conflicts(reference, latest, entrant):
-
-    # Just in case (eg. both removed the same element, or changed only metadatas)
-    if latest == entrant:
-        return latest
-
-    # Remove common features between entrant and reference versions (unchanged ones).
-    for feature in reference[:]:
-        for other in entrant[:]:
-            if feature == other:
-                entrant.remove(feature)
-                reference.remove(feature)
-                break
-
-    # Now make sure remaining features are still in latest version
-    for feature in reference:
-        found = False
-        for other in latest:
-            if other == feature:
-                found = True
-                break
-        if not found:
-            # We cannot distinguish the case where both deleted the same
-            # element and added others, or where both modified the same
-            # element, so let's raise a conflict by caution.
-            return False
-
-    # We can merge.
-    for feature in reference:
-        latest.remove(feature)
-    for feature in entrant:
-        latest.append(feature)
-    return latest
 
 def is_ajax(request):
-    return request.headers.get('x-requested-with') == 'XMLHttpRequest'
+    return request.headers.get("x-requested-with") == "XMLHttpRequest"

@@ -275,7 +275,7 @@ L.U.DataLayer = L.Evented.extend({
         if (!this.umap_id) return;
         this.map.get(this._dataUrl(), {
             callback: function (geojson, response) {
-                this._etag = response.getResponseHeader('ETag');
+                this._last_modified = response.getResponseHeader('Last-Modified');
                 this.fromUmapGeoJSON(geojson);
                 this.backupOptions();
                 this.fire('loaded');
@@ -366,7 +366,7 @@ L.U.DataLayer = L.Evented.extend({
     },
 
     hasDataLoaded: function () {
-        return !this.umap_id || this._geojson !== null;
+        return this._geojson !== null;
     },
 
     setUmapId: function (id) {
@@ -402,8 +402,11 @@ L.U.DataLayer = L.Evented.extend({
     },
 
     _dataUrl: function() {
-        var template = this.map.options.urls.datalayer_view;
-        return L.Util.template(template, {'pk': this.umap_id, 'map_id': this.map.options.umap_id});
+        var template = this.map.options.urls.datalayer_view,
+            url = L.Util.template(template, {'pk': this.umap_id, 'map_id': this.map.options.umap_id});
+        // No browser cache for owners/editors.
+        if (this.map.options.allowEdit) url = url + '?' + Date.now();
+        return url;
     },
 
     isRemoteLayer: function () {
@@ -1024,7 +1027,7 @@ L.U.DataLayer = L.Evented.extend({
                     this.fromGeoJSON(data.geojson);
                 }
                 this._geojson = geojson;
-                this._etag = response.getResponseHeader('ETag');
+                this._last_modified = response.getResponseHeader('Last-Modified');
                 this.setUmapId(data.id);
                 this.updateOptions(data);
                 this.backupOptions();
@@ -1035,7 +1038,7 @@ L.U.DataLayer = L.Evented.extend({
                 this.map.continueSaving();
             },
             context: this,
-            headers: {'If-Match': this._etag || ''}
+            headers: this._last_modified ? {'If-Unmodified-Since': this._last_modified} : {}
         });
     },
 
