@@ -13,7 +13,6 @@
     "mocha": "^2.3.3",
     "mocha-chrome": "2.2.0",
     "optimist": "~0.4.0",
-    "phantomjs": "^1.9.18",
     "sinon": "^1.10.3",
     "uglify-js": "~3.17.4",
     "browserify": "17.0.0",
