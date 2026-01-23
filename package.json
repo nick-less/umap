@@ -16,7 +16,7 @@
     "sinon": "^1.10.3",
     "uglify-js": "~3.17.4",
     "browserify": "17.0.0",
-    "svgtofont": "3.22.0"
+    "svgtofont": "6.5.1"
   },
   "scripts": {
     "test": "mocha-chrome umap/static/umap/test/index.html",
